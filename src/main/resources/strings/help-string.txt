@@ -1,0 +1,9 @@
+OVERVIEW: A Java architecture checker
+
+USAGE: archcheck [-options] <path-to-source-code>
+
+OPTIONS:
+ -?, --help          Shows this help message.
+ -c, --config        Specifies the configuration file.
+ -m, --html          Enables HTML output to the specified directory.
+ -v, --version       Print version info.

@@ -1,0 +1,27 @@
+group 'org.cedar.wrapper'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = "org.archcheck.inspect.app.Application"
+
+sourceCompatibility = 1.5
+
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile 'com.squareup.dagger:dagger:1.2.2'
+    compile 'com.squareup.dagger:dagger-compiler:1.2.2'
+    compile 'org.apache.commons:commons-io:1.3.2'
+    compile 'com.fasterxml:jackson-module-json-org:0.9.1'
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.mockito:mockito-all:1.9.5'
+
+}
+
+
