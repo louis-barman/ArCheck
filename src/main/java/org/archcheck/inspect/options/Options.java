@@ -13,13 +13,12 @@ public class Options implements ModelOptions {
 
     private final List<String> hiddenImports = new ArrayList<String>();
 
-    Map<String, Boolean> hiddenClasses = new HashMap<String, Boolean>();
+    private Map<String, Boolean> hiddenClasses = new HashMap<String, Boolean>();
 
     public boolean showAllPackages() {
         return showAllPackages;
     }
 
-    @Override
     public int getMaxNameSpaceDepth() {
         return maxNameSpaceDepth;
     }

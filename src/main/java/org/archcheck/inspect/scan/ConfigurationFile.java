@@ -22,7 +22,7 @@ public class ConfigurationFile {
     public static final String CONFIG_FIELD_NAME = "name";
     public static final String CONFIG_FIELD_PATH = "path";
     public static final String CONFIG_FIELD_MAX_DEPTH = "max-depth";
-    public static final String CONFIG_HIDE_IMPORT = "hide-stuff";//"hide-import";
+    public static final String CONFIG_HIDE_IMPORT = "hide-import";
     private final ObjectMapper jsonMapper;
     private final ProjectDetails projectDetails;
     private String rootDirectory = "";
@@ -59,11 +59,13 @@ public class ConfigurationFile {
         Outcome outcome = Outcome.success();
 
         try {
-            input = new FileInputStream(configFile);
+            File file = new File(configFile);
+            input = new FileInputStream(file);
 
             JsonNode root = jsonMapper.readTree(input);
 
-            outcome = passProperties(root);
+            String configPath = file.getParent() + "/";
+            outcome = passProperties(root, configPath);
 
         } catch (FileNotFoundException e) {
             return Outcome.failure("Config file not found '" + configFile + "'");
@@ -82,9 +84,19 @@ public class ConfigurationFile {
         return outcome;
     }
 
-    private Outcome passProperties(JsonNode root) {
+    private Outcome passProperties(JsonNode root, String configPath) {
 
         rootDirectory = root.get("root-dir").getValueAsText();
+        if (rootDirectory == null) {
+            return Outcome.failure("Missing root-dir");
+        }
+        if (!rootDirectory.endsWith("/")) {
+            rootDirectory += "/";
+        }
+
+        if (!rootDirectory.startsWith("/")) {
+            rootDirectory = configPath + rootDirectory;
+        }
         Outcome outcome = validateDirectory(rootDirectory);
         if (outcome.failed())  {
             return outcome;
@@ -118,7 +130,7 @@ public class ConfigurationFile {
     private Outcome validateDirectory(String directoryPath) {
         File file = new File(directoryPath);
         if (!file.isDirectory()) {
-            return Outcome.failure("not a valid directory " + directoryPath);
+            return Outcome.failure("not a valid directory: " + directoryPath);
         }
         return Outcome.success();
     }
