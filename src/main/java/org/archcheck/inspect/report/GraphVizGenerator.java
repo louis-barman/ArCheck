@@ -171,7 +171,7 @@ public class GraphVizGenerator extends ReportGenerator {
 
     }
 
-    void startGraphViz(String name) {
+    private void startGraphViz(String name) {
         String path = output.getAbsolutePath() + "/" + name + "/" + name;
         ProcessBuilder builder = new ProcessBuilder("dot", "-Tsvg", "-o" + path + ".svg", path + EXTN_DOT);
         try {

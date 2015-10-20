@@ -39,26 +39,52 @@ public class TextGenerator extends ReportGenerator {
         println("========================================== ");
         println("MODULE: " + results.getModuleName());
         println("========================================== ");
+        println("");
     }
 
     private void displayComponents(ModuleResults results) {
-        println("");
-        println("Components:");
-        println("----------- ");
+        long totalFileSize = results.getTotalFileSize();
+        tableHeading(11, "Component");
+        tableHeading(10, "Circular");
+        tableHeading(10, "Percent");
+        tableHeading(10, "Private");
+        tableHeading(8, "Public");
+        println("Group");
 
         ResultsList table = results.getCodeGroupSummaryTable();
-        for (ResultsHolder row : table) {
-            displayComponentsRow(row);
+         for (ResultsHolder row : table) {
+            displayCodeGroupSummaryRow(row, totalFileSize);
         }
+        println("");
+
     }
 
-    private void displayComponentsRow(ResultsHolder holder) {
-        println(holder.getString("elementKey"));
-        ResultsList row = holder.getResultsList("visiblePackagesList");
+    private void displayCodeGroupSummaryRow(ResultsHolder holder, long totalFileSize) {
+        boolean component = holder.getBool("component");
+        boolean circular = holder.getBool("circular");
+        tableRow(11,  yesNo(component));
+        tableRow(10, yesNo(circular));
+        double percent = (holder.getLong("fileSize")/(double)totalFileSize) * 100.0;
+        tableRow(10, String.format("%05.2f%%", percent));
+        tableRow(10, "" + holder.getInt("publicClassesSize"));
+        tableRow(8, "" + holder.getInt("internalClassesSize"));
+        println("" + holder.getString("fullName"));
+    }
 
-        for (int i = 0; i < row.size(); i++) {
-            println("     -> " + row.getString(i));
+    private void tableRow(int width, String s) {
+        StringBuilder output = new StringBuilder(s);
+        while (output.length() < width) {
+            output.append(' ');
         }
+
+        print(output.toString() );
+    }
+    private void tableHeading(int width, String s) {
+        tableRow(width, s);
+    }
+
+    private String yesNo(boolean state) {
+        return (state)?"yes   ":"no    ";
     }
 
 }

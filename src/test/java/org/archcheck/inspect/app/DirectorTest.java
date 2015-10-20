@@ -5,6 +5,7 @@ import dagger.ObjectGraph;
 import dagger.Provides;
 import org.archcheck.inspect.TestBase;
 import org.archcheck.inspect.scan.ConfigurationFile;
+import org.archcheck.inspect.util.Outcome;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -49,6 +51,7 @@ public class DirectorTest extends TestBase {
     @Before
     public void setUp() throws Exception {
         ObjectGraph.create(new TestModule()).inject(this);
+        Mockito.when(configFile.setConfigFile(Mockito.anyString())).thenReturn(Outcome.success());
     }
 
     @Test

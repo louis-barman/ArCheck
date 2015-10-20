@@ -41,15 +41,11 @@ public class TransverseTest extends TestBase {
 
     @Test
     public void runTest() {
-        //String testFileName = getTestConfigFileName("spark-master.config");
-        //String testFileName = getTestConfigFileName("jenkins-master.config");
-        //String testFileName = getTestConfigFileName("fitnesse-master.config");
         String testFileName = getTestConfigFileName("archcheck.config");
 
         configFile.setConfigFile(testFileName);
 
         classUnderTest.start();
-
     }
 
 }
