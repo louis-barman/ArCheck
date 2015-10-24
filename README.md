@@ -9,11 +9,10 @@ Dividing large programs into smaller more manageable components is a fundamental
 The installation steps are as follows:
 
 1. Ensure the **Java** runtime is installed
-1. Download and unzip the **archcheck-1.0-SNAPSHOT.zip** from here.
+1. Download and unzip the **archcheck** release.
 1. Ensure that **archcheck** executable is added to you path.
 1. Optionally install **graphviz**. Required for the graphical diagrams.
-
-Ensure **graphviz** is added to your path.
+1. Ensure the **graphviz** executable is added to your path.
 
 ##  Running
 
@@ -27,9 +26,7 @@ Where `<path-to-source-code>` is the directory of just the java source code e.g.
 
 To generate an html output type the following:
 
-
     archcheck --html <html-output-dir> <path-to-source-code>
-
 
 
 You can also pass a configuration file to **archcheck**
@@ -67,6 +64,7 @@ An example of configuration is as follows:
     ]
 }
 ```
+
 
 ## Building 
 
