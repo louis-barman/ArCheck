@@ -70,7 +70,7 @@ public class ConfigurationFile {
         } catch (FileNotFoundException e) {
             return Outcome.failure("Config file not found '" + configFile + "'");
         } catch (IOException e) {
-            return Outcome.failure(e);
+            return Outcome.failure("Invalid config '" + configFile + "' - " + e.getMessage());
         } finally {
             try {
                 if (input != null) {
@@ -86,7 +86,8 @@ public class ConfigurationFile {
 
     private Outcome passProperties(JsonNode root, String configPath) {
 
-        rootDirectory = root.get("root-dir").getValueAsText();
+        String configRootDir= root.get("root-dir").getValueAsText();
+        rootDirectory = configRootDir;
         if (rootDirectory == null) {
             return Outcome.failure("Missing root-dir");
         }
@@ -97,7 +98,7 @@ public class ConfigurationFile {
         if (!rootDirectory.startsWith("/")) {
             rootDirectory = configPath + rootDirectory;
         }
-        Outcome outcome = validateDirectory(rootDirectory);
+        Outcome outcome = validateDirectory(rootDirectory, configRootDir);
         if (outcome.failed())  {
             return outcome;
         }
@@ -127,10 +128,10 @@ public class ConfigurationFile {
         return Outcome.success();
     }
 
-    private Outcome validateDirectory(String directoryPath) {
+    private Outcome validateDirectory(String directoryPath, String configPath) {
         File file = new File(directoryPath);
         if (!file.isDirectory()) {
-            return Outcome.failure("not a valid directory: " + directoryPath);
+            return Outcome.failure("not a valid directory: " + configPath);
         }
         return Outcome.success();
     }

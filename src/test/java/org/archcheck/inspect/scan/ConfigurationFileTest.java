@@ -2,25 +2,17 @@ package org.archcheck.inspect.scan;
 
 import dagger.Module;
 import dagger.ObjectGraph;
-import dagger.Provides;
 import org.archcheck.inspect.TestBase;
 import org.archcheck.inspect.app.DaggerAppModule;
 import org.archcheck.inspect.model.ProjectDetails;
-import org.archcheck.inspect.options.Options;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 
 public class ConfigurationFileTest extends TestBase {
@@ -70,7 +62,7 @@ public class ConfigurationFileTest extends TestBase {
     @Test
     public void test_thereAreNoHiddenImports() {
         setTestConfigFileName("test-config.config");
-         assertEquals(2, projectDetails.getModuleList().size());
+        assertEquals(2, projectDetails.getModuleList().size());
         assertEquals(0, projectDetails.getModuleList().get(0).getOptions().getHiddenImports().size());
         assertEquals(0, projectDetails.getModuleList().get(1).getOptions().getHiddenImports().size());
     }
@@ -83,6 +75,12 @@ public class ConfigurationFileTest extends TestBase {
         assertEquals(2, projectDetails.getModuleList().get(1).getOptions().getHiddenImports().size());
         assertEquals("hide.package1.Class1", projectDetails.getModuleList().get(1).getOptions().getHiddenImports().get(0));
         assertEquals("hide.package2.Class2", projectDetails.getModuleList().get(1).getOptions().getHiddenImports().get(1));
+    }
+
+    @Test
+    public void test_badlyFormattedConfigFile() {
+        String testFileName = getTestConfigFileName("bad-config.config");
+        classUnderTest.setConfigFile(testFileName);
     }
 
 }

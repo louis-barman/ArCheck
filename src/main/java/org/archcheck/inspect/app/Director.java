@@ -18,6 +18,7 @@ public class Director {
     public static final String OPTION_CONFIG = "config";
     private static final String OPTION_HTML = "html";
     private static final String OPTION_HELP = "help";
+    private static final String OPTION_VERSION = "version";
 
 
     @Inject
@@ -75,6 +76,8 @@ public class Director {
 
         if (matchOption(firstArg, '?', OPTION_HELP)) {
             printHelp();
+        } else if (matchOption(firstArg, 'v', OPTION_VERSION)) {
+            printVersionString();
         } else if (matchOption(firstArg, 'c', OPTION_CONFIG)) {
             if (secondArg.length() == 0) {
                 return errorMissingOption(OPTION_CONFIG);
@@ -119,6 +122,11 @@ public class Director {
         }
 
         return false;
+    }
+
+
+    private void printVersionString() {
+        XLog.println("archcheck version 0.2.0");// + getClass().getPackage().getImplementationVersion());
     }
 
     protected void printHelp() {

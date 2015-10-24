@@ -37,8 +37,6 @@ You can also pass a configuration file to **archcheck**
     archcheck --config <config-file> --html <html-output-dir>
 
 
-
-
 ## The Configuration file
 
 The configuration file is a json file in which comments and unquoted field names are allowed.
@@ -49,7 +47,7 @@ The configuration file is a json file in which comments and unquoted field names
  **modules:**      | A json array with details of the list of modules in the project.       |
  **name:** | The name of the module.       |
  **path:** | the path from the root dir to the source code.        |
- **max-depth:** | TBD       |
+ **max-depth:** | Controls the maximum depth to descend into package directories before the sub dirs are merged together       |
 
 
 #### Example configuration file
@@ -70,3 +68,15 @@ An example of configuration is as follows:
 }
 ```
 
+## Building 
+
+Requirements:
+
+* Java
+* gradle
+
+Type the following on the command line:
+
+    gradle installApp
+    
+The executable will be in the `build/install/archcheck/bin` directory

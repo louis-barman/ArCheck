@@ -86,7 +86,10 @@ public class Transverse {
 
         if (reportType.equals(REPORT_HTML)) {
             ReportGenerator graphWizReport = ReportGeneratorFactory.outputGenerator("GraphViz", outputWrapper);
-            graphWizReport.generateReports(projectResults);
+            boolean success = graphWizReport.generateReports(projectResults);
+            if (!success) {
+                return false;
+            }
         }
 
         ReportGenerator reports = ReportGeneratorFactory.outputGenerator(reportType, outputWrapper);

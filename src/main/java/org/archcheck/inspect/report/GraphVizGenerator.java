@@ -6,6 +6,7 @@ import org.archcheck.inspect.options.Options;
 import org.archcheck.inspect.output.OutputWrapper;
 import org.archcheck.inspect.results.ModuleResults;
 import org.archcheck.inspect.results.ProjectResults;
+import org.archcheck.inspect.util.XLog;
 
 import java.io.IOException;
 import java.util.*;
@@ -27,11 +28,15 @@ public class GraphVizGenerator extends ReportGenerator {
 
     @Override
     public boolean generateReports(ProjectResults projectResults) {
+
         for (ModuleResults moduleResults : projectResults) {
             resetData();
             Options options = moduleResults.getOptions();
             hideStuff(options.getHiddenImports());
-            generateOutput(moduleResults);
+            boolean success = generateOutput(moduleResults);
+            if (!success) {
+                return false;
+            }
         }
         return true;
     }
@@ -42,7 +47,7 @@ public class GraphVizGenerator extends ReportGenerator {
         uniqueShortNameList.clear();
     }
 
-    private void generateOutput(ModuleResults results) {
+    private boolean generateOutput(ModuleResults results) {
         String name = results.getModuleName();
         openFile(name + "/" + name + EXTN_DOT);
         println("digraph \"" + name + "\"  {");
@@ -52,7 +57,7 @@ public class GraphVizGenerator extends ReportGenerator {
         displayComponents(results);
         println("}");
         closeFile();
-        startGraphViz(name);
+        return startGraphViz(name);
     }
 
     private void displayComponents(ModuleResults results) {
@@ -69,8 +74,9 @@ public class GraphVizGenerator extends ReportGenerator {
             return;
         }
         ResultsList imports = holder.getResultsList("imports");
-        ResultsList crossRef = holder.getResultsList("crossRef");;
-        if (imports.size() == 0 && crossRef.size() == 0 ) {
+        ResultsList crossRef = holder.getResultsList("crossRef");
+        ;
+        if (imports.size() == 0 && crossRef.size() == 0) {
             return;
         }
 
@@ -171,13 +177,25 @@ public class GraphVizGenerator extends ReportGenerator {
 
     }
 
-    private void startGraphViz(String name) {
+    private boolean startGraphViz(String name) {
         String path = output.getAbsolutePath() + "/" + name + "/" + name;
         ProcessBuilder builder = new ProcessBuilder("dot", "-Tsvg", "-o" + path + ".svg", path + EXTN_DOT);
         try {
             Process process = builder.start();
+            int errorCode = process.waitFor();
+            if (errorCode == 0) {
+                return true;
+            } else {
+                XLog.error("Graphviz - Exited with an error");
+                return false;
+
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            XLog.error("Graphviz - Graph Visualization Software not found in PATH");
+            return true;
+        } catch (InterruptedException e) {
+            XLog.e("Graphviz " + e.getMessage());
+            return false;
         }
     }
 
