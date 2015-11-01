@@ -3,6 +3,10 @@ package org.archcheck.inspect.model;
 
 import org.archcheck.inspect.options.Options;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Copyright (C) 2015 Louis Barman.
  */
@@ -13,7 +17,7 @@ public class ModuleDetails {
 
     private final ElementAnalyser classAnalyser;
     private final GroupAnalyser packageAnalyser;
-    private String pathToSource;
+    private Collection<String> pathToSource = new ArrayList<String>();
     private long totalFileLength;
 
     public ModuleDetails(Options options) {
@@ -30,11 +34,11 @@ public class ModuleDetails {
         return name;
     }
 
-    public void setPath(String pathToSource) {
-        this.pathToSource = pathToSource;
+    public void addPaths(Collection<String> pathToSource ) {
+        this.pathToSource.addAll(pathToSource);
     }
 
-    public String getSourceDir() {
+    public Collection<String> getSourceDirs() {
         return pathToSource;
     }
 

@@ -12,6 +12,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -19,13 +21,18 @@ import java.util.Iterator;
  */
 @Singleton
 public class ConfigurationFile {
-    public static final String CONFIG_FIELD_NAME = "name";
-    public static final String CONFIG_FIELD_PATH = "path";
-    public static final String CONFIG_FIELD_MAX_DEPTH = "max-depth";
-    public static final String CONFIG_HIDE_IMPORT = "hide-import";
+    private static final String CONFIG_FIELD_NAME = "name";
+    private static final String CONFIG_FIELD_PATH = "path";
+    private static final String CONFIG_FIELD_MAX_DEPTH = "max-depth";
+    private static final String CONFIG_HIDE_IMPORT = "hide-import";
+    private static final String CONFIG_ROOT_DIR = "root-dir";
+    private static final String CONFIG_MODULES = "modules";
+    private static final String CONFIG_REPORT_DIR = "report-dir";
     private final ObjectMapper jsonMapper;
     private final ProjectDetails projectDetails;
-    private String rootDirectory = "";
+    private String rootDirectory = "./";
+    private boolean configFileUsed;
+    private String reportDir;
 
     @Inject
     public ConfigurationFile(ProjectDetails projectDetails) {
@@ -53,6 +60,7 @@ public class ConfigurationFile {
 
 
     public Outcome setConfigFile(String configFile) {
+        configFileUsed = true;
         XLog.d("setConfigFile " + configFile);
 
         InputStream input = null;
@@ -86,23 +94,17 @@ public class ConfigurationFile {
 
     private Outcome passProperties(JsonNode root, String configPath) {
 
-        String configRootDir= root.get("root-dir").getValueAsText();
-        rootDirectory = configRootDir;
-        if (rootDirectory == null) {
-            return Outcome.failure("Missing root-dir");
-        }
-        if (!rootDirectory.endsWith("/")) {
-            rootDirectory += "/";
-        }
-
-        if (!rootDirectory.startsWith("/")) {
-            rootDirectory = configPath + rootDirectory;
-        }
-        Outcome outcome = validateDirectory(rootDirectory, configRootDir);
+        Outcome outcome = configRootDir(root, configPath);
         if (outcome.failed())  {
             return outcome;
         }
-        JsonNode jsonArray = root.get("modules");
+
+        if (root.has(CONFIG_REPORT_DIR)) {
+            String configReportDir = root.get(CONFIG_REPORT_DIR).getValueAsText();
+            setReportDir(configReportDir);
+        }
+
+        JsonNode jsonArray = root.get(CONFIG_MODULES);
         if (!jsonArray.isArray()) {
             return Outcome.failure("missing modules form the configuration file" );
         }
@@ -115,8 +117,8 @@ public class ConfigurationFile {
             JsonNode item = jsonArray.get(i);
             String name = item.get(CONFIG_FIELD_NAME).getTextValue();
             module.setName(name);
-            String path = item.get(CONFIG_FIELD_PATH).getTextValue();
-            module.setPath(path);
+            Collection<String> paths = getStringArray(item, CONFIG_FIELD_PATH);
+            module.addPaths(paths);
             if (item.has(CONFIG_FIELD_MAX_DEPTH)) {
                 int maxDepth = item.get(CONFIG_FIELD_MAX_DEPTH).getIntValue();
                 moduleOptions.setMaxDepth(maxDepth);
@@ -126,6 +128,36 @@ public class ConfigurationFile {
             findModuleOptions(item, moduleOptions);
         }
         return Outcome.success();
+    }
+
+    private Outcome configRootDir(JsonNode root, String configPath) {
+        if (!root.has(CONFIG_ROOT_DIR)) {
+            return Outcome.success();
+        }
+        String configRootDir= root.get(CONFIG_ROOT_DIR).getValueAsText();
+        rootDirectory = configRootDir;
+        if (!rootDirectory.endsWith("/")) {
+            rootDirectory += "/";
+        }
+
+        if (!rootDirectory.startsWith("/")) {
+            rootDirectory = configPath + rootDirectory;
+        }
+        Outcome outcome = validateDirectory(rootDirectory, configRootDir);
+
+        return outcome;
+    }
+
+    private Collection<String> getStringArray(JsonNode item, String filedName ) {
+        Collection<String> result = new ArrayList<String>();
+        JsonNode jsonStrings =  item.get(filedName);
+        if (jsonStrings.isTextual()) {
+            result.add(jsonStrings.getTextValue());
+        } else  if (jsonStrings.isArray()) {
+            for(JsonNode jsonString : jsonStrings )
+                result.add(jsonString.getTextValue());
+        }
+        return result;
     }
 
     private Outcome validateDirectory(String directoryPath, String configPath) {
@@ -158,7 +190,6 @@ public class ConfigurationFile {
         pathToSource = stripTrailingSlashes(pathToSource);
         rootDirectory = pathToSource;
         ModuleDetails module = projectDetails.createNewModuleItem();
-        module.setPath("");
         pathToSource = stripTrailingSlashes(pathToSource);
         if (pathToSource.length() == 0) {
             return;
@@ -183,4 +214,15 @@ public class ConfigurationFile {
         return stripped;
     }
 
+    public boolean isConfigFileUsed() {
+        return configFileUsed;
+    }
+
+    public void setReportDir(String reportDir) {
+        this.reportDir = reportDir;
+    }
+
+    public String getReportDir() {
+        return reportDir;
+    }
 }

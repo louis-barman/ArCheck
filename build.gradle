@@ -1,5 +1,5 @@
 group 'org.cedar.wrapper'
-version '0.2.0'
+version '0.2.2-SNAPSHOT' // VERSION_NAME
 
 apply plugin: 'java'
 apply plugin: 'application'

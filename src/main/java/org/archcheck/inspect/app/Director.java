@@ -7,6 +7,7 @@ import org.archcheck.inspect.util.XLog;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -19,6 +20,8 @@ public class Director {
     private static final String OPTION_HTML = "html";
     private static final String OPTION_HELP = "help";
     private static final String OPTION_VERSION = "version";
+    public static final String DEFAULT_ARCHCHECK_CONFIG = "archcheck.config";
+    public static final String VERSION_NAME = "0.2.2-SNAPSHOT";
 
 
     @Inject
@@ -28,15 +31,25 @@ public class Director {
     ConfigurationFile configFile;
 
     private boolean secondArgConsumed;
+    private boolean abort;
 
     public boolean start(String[] args) {
-        if (args.length == 0) {
+
+        if (args.length == 0 && !hasDefaultConfig()) {
             XLog.printlnError("ERROR: missing <path-to-source-code>");
             XLog.printlnError("USAGE: archcheck [-options] <path-to-source-code>");
             XLog.printlnError("For help use '-?' or  '--help'");
-            return true;
+            return false;
         }
         boolean success = passArguments(args);
+
+        if (abort) {
+            return true;
+        }
+
+        if (success) {
+            success = loadDefaultConfigFile();
+        }
 
         if (success) {
             return transverse.start();
@@ -44,10 +57,30 @@ public class Director {
         return success;
     }
 
+    private boolean hasDefaultConfig() {
+        File defaultConfigFile = new File(DEFAULT_ARCHCHECK_CONFIG);
+        return defaultConfigFile.exists();
+    }
+
+    private boolean loadDefaultConfigFile() {
+        if (configFile.isConfigFileUsed()) {
+            return true;
+        }
+
+        if (hasDefaultConfig()) {
+            Outcome outcome = configFile.setConfigFile(DEFAULT_ARCHCHECK_CONFIG);
+            if (!outcome.successful()) {
+                XLog.error(outcome.getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean passArguments(String[] args) {
         int argumentIndex = 0;
 
-        while (argumentIndex < args.length) {
+        while (argumentIndex < args.length && !abort) {
             String firstArg = args[argumentIndex];
             String secondArg = (argumentIndex + 1 < args.length) ? args[argumentIndex + 1] : "";
 
@@ -88,7 +121,7 @@ public class Director {
             if (secondArg.length() == 0) {
                 return errorMissingOption(OPTION_HTML);
             }
-            outcome = transverse.setHtmlOutput(secondArg);
+            configFile.setReportDir(secondArg);
             consumeSecondArg();
         } else {
             XLog.error("Unrecognised option: " + firstArg);
@@ -126,7 +159,8 @@ public class Director {
 
 
     private void printVersionString() {
-        XLog.println("archcheck version 0.2.0");// + getClass().getPackage().getImplementationVersion());
+        XLog.println("archcheck version " + VERSION_NAME);// + getClass().getPackage().getImplementationVersion());
+        abort = true;
     }
 
     protected void printHelp() {
@@ -143,6 +177,7 @@ public class Director {
         } catch (IOException e) {
             XLog.e(e.getMessage());
         }
+        abort = true;
     }
 
 }

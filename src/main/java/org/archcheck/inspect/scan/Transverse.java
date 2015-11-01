@@ -14,6 +14,7 @@ import org.archcheck.inspect.util.XLog;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -39,6 +40,15 @@ public class Transverse {
 
     public boolean start() {
 
+        String reportDir =  configFile.getReportDir();
+
+        if (reportDir!= null) {
+            Outcome outcome = setHtmlOutput(reportDir);
+            if (outcome.failed()) {
+                return false;
+            }
+        }
+
         for (ModuleDetails module : projectDetails.getModuleList()) {
             projectResults.createModuleResults(module);
             boolean result = findFilesPhase(module);
@@ -52,22 +62,26 @@ public class Transverse {
     }
 
     private boolean findFilesPhase(ModuleDetails module) {
-        String sourceDir = module.getSourceDir();
-
+        Collection<File> files = new ArrayList<File>();
         WildcardFileFilter fileFilter = new WildcardFileFilter(configFile.getFileTypes());
 
-        String projectRootDir = configFile.getProjectRootDir();
-        if (!projectRootDir.endsWith("/")) {
-            projectRootDir += '/';
-        }
-        String filePath = projectRootDir + sourceDir;
-        File rootDir = new File(filePath);
-        if (!rootDir.isDirectory()) {
-            XLog.error(" The directory does not exist: " + filePath);
-            return false;
-        }
+        Collection<String> sourceDirs = module.getSourceDirs();
 
-        Collection<File> files = FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE);
+        for (String sourceDir : sourceDirs) {
+            
+            String projectRootDir = configFile.getProjectRootDir();
+            if (!projectRootDir.endsWith("/")) {
+                projectRootDir += '/';
+            }
+            String filePath = projectRootDir + sourceDir;
+            File rootDir = new File(filePath);
+            if (!rootDir.isDirectory()) {
+                XLog.error(" The directory does not exist: " + filePath);
+                return false;
+            }
+
+            files.addAll(FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE));
+        }
         for (File file : files) {
             XLog.v("Found file: " + file);
 
@@ -90,15 +104,15 @@ public class Transverse {
             if (!success) {
                 return false;
             }
+            XLog.println("archcheck: Generated HTML report in directory '" +configFile.getReportDir() + "'");
         }
 
         ReportGenerator reports = ReportGeneratorFactory.outputGenerator(reportType, outputWrapper);
         return reports.generateReports(projectResults);
     }
 
-    public Outcome setHtmlOutput(String outputDir) {
+    private Outcome setHtmlOutput(String outputDir) {
         reportType = REPORT_HTML;
         return outputWrapper.setOutputDirectory(outputDir);
-
     }
 }

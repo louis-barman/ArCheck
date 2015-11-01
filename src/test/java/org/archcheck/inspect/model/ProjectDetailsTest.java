@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
@@ -57,8 +58,13 @@ public class ProjectDetailsTest extends TestBase {
         assertEquals(2, moduleList.size());
         assertEquals("AAA", moduleList.get(0).getModuleName());
         assertEquals("BBB", moduleList.get(1).getModuleName());
-        assertEquals("path/one", moduleList.get(0).getSourceDir());
-        assertEquals("path/two", moduleList.get(1).getSourceDir());
+        List<String> dirs = (List<String>) moduleList.get(0).getSourceDirs();
+        assertEquals(1, dirs.size());
+        assertEquals("path/one", dirs.get(0));
+        dirs = (List<String>) moduleList.get(1).getSourceDirs();
+        assertEquals(2, dirs.size());
+        assertEquals("path/two-A", dirs.get(0));
+        assertEquals("path/two-B", dirs.get(1));
     }
 
 }

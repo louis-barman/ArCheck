@@ -8,12 +8,14 @@ import org.archcheck.inspect.util.XLog;
  * there are no methods or variables the have the same name as a class
  * (Eg 'MyClass String;' <- String is a variable not the String Class.)
  */
+
 /**
  * Copyright (C) 2015 Louis Barman.
  */
 public class JavaLanguage extends AnyLanguage {
     public static final String KEY_WORD_PACKAGE = "package";
     public static final String KEY_WORD_IMPORT = "import";
+    public static final String KEY_WORD_STATIC = "static";
     public static final String STATEMENT_TERMINATOR = ";";
 
     public void findImports(LineReader lines, Token token) {
@@ -40,6 +42,11 @@ public class JavaLanguage extends AnyLanguage {
         if (beginsWith(line, KEY_WORD_IMPORT)) {
             XLog.d("import: " + line);
             String importName = line.substring(KEY_WORD_IMPORT.length() + 1).trim();
+
+            if (importName.startsWith(KEY_WORD_STATIC)) {
+                importName = importName.substring(KEY_WORD_STATIC.length() + 1).trim();
+            }
+
             int index = importName.lastIndexOf('.');
             if (index <= 0) {
                 return;
