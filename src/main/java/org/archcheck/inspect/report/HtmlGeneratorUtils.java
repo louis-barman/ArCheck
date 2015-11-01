@@ -83,7 +83,7 @@ public abstract class HtmlGeneratorUtils extends ReportGenerator {
 
     protected void startTableHeading() {
         println(" <div class=\"tab\">");
-        println("<table><thead>\n<tr>");
+        println("<table class=\"tablesorter\"><thead>\n<tr>");
     }
 
     protected void startTableData() {
