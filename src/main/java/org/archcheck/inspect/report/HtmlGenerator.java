@@ -11,6 +11,7 @@ import org.archcheck.inspect.results.ProjectResults;
  */
 public class HtmlGenerator extends HtmlGeneratorUtils {
     public static final String DIR_CSS = "css/";
+    public static final String DIR_JS = "js/";
     public static final String DIR_CLASSES = "classes/";
     public static final String DIR_PACKAGES = "packages/";
     public static final String INDEX = "index";
@@ -84,10 +85,21 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
         closeFile();
     }
 
+    private void createJavaScripts() {
+        openFile(DIR_JS + "jquery-latest.js");
+        print(getResourceString("/js/jquery-latest.js"));
+        closeFile();
+        openFile(DIR_JS + "jquery.tablesorter.js");
+        print(getResourceString("/js/jquery.tablesorter.min.js"));
+        closeFile();
+    }
+
+
     @Override
     public boolean generateReports(ProjectResults projectResults) {
 
         createStyleSheet();
+        createJavaScripts();
 
         for (ModuleResults moduleResults : projectResults) {
 
