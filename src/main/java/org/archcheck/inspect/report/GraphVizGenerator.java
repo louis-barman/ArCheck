@@ -60,7 +60,7 @@ public class GraphVizGenerator extends ReportGenerator {
         String label = "Dependencies for: " + name;
 
         if (hideComponents.size() > 0) {
-            label += " (ignoring " + hideComponents.size() +" items)";
+            label += " (ignoring " + hideComponents.size() + " items)";
         }
 
         println("graph [dpi = 65, label=\"" + label + "\"];");
