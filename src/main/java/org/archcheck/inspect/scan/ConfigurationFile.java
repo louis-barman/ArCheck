@@ -188,8 +188,10 @@ public class ConfigurationFile {
 
     public void addPathToSource(String pathToSource) {
         pathToSource = stripTrailingSlashes(pathToSource);
+
         rootDirectory = pathToSource;
         ModuleDetails module = projectDetails.createNewModuleItem();
+        module.addPath(".");
         pathToSource = stripTrailingSlashes(pathToSource);
         if (pathToSource.length() == 0) {
             return;

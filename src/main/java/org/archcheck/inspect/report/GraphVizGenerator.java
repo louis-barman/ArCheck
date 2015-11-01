@@ -136,7 +136,7 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
     private boolean ignoreName(String name) {
-         for (String ignore : hideComponents) {
+        for (String ignore : hideComponents) {
             if (ignore.equals(name)) {
                 return true;
             }
@@ -157,27 +157,33 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
     private String createUniqueShortName(String longName) {
-        String shortName = createShortName(longName);
-        for (int i = 0; i < 100; i++) {
+        String shortName = createShortName(longName, 0);
+
+        for (int i = 1; i < 10; i++) {
             if (!uniqueShortNameList.contains(shortName)) {
                 uniqueShortNameList.add(shortName);
                 break;
-            } else {
-                shortName += "-V2";
             }
+            shortName = createShortName(longName, i);
         }
         return shortName;
     }
 
-    private String createShortName(String longName) {
+    private String createShortName(String longName, int dotIndex) {
+        int dotCounter = 0;
+        int n = longName.length() - 1;
 
-        int index = longName.lastIndexOf('.');
-        if (index < 0) {
-            return longName;
+        while (n > 0) {
+            if (longName.charAt(n) == '.') {
+                if (dotCounter == dotIndex) {
+                    return longName.substring(n + 1);
+                }
+                dotCounter++;
+            }
+            n--;
         }
-        return longName.substring(index + 1);
 
-
+        return longName;
     }
 
     private boolean startGraphViz(String name) {

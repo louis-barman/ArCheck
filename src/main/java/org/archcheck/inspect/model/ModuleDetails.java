@@ -38,6 +38,10 @@ public class ModuleDetails {
         this.pathToSource.addAll(pathToSource);
     }
 
+    public void addPath(String pathToSource ) {
+        this.pathToSource.add(pathToSource);
+    }
+
     public Collection<String> getSourceDirs() {
         return pathToSource;
     }
