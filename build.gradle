@@ -6,7 +6,7 @@ apply plugin: 'application'
 
 mainClassName = "org.archcheck.inspect.app.Application"
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.6
 
 
 repositories {

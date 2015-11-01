@@ -20,7 +20,7 @@ public class GraphVizGenerator extends ReportGenerator {
     private final Set<String> bothWaysArrowList = new HashSet<String>();
     private final Map<String, String> shortNameLookUp = new HashMap<String, String>();
     private final Set<String> uniqueShortNameList = new HashSet<String>();
-    private List<String> hideStuff;
+    private final List<String> hideComponents = new ArrayList<String>();
 
     public GraphVizGenerator(OutputWrapper output) {
         super(output);
@@ -32,7 +32,7 @@ public class GraphVizGenerator extends ReportGenerator {
         for (ModuleResults moduleResults : projectResults) {
             resetData();
             Options options = moduleResults.getOptions();
-            hideStuff(options.getHiddenImports());
+            hideComponents(options.getHiddenImports());
             boolean success = generateOutput(moduleResults);
             if (!success) {
                 return false;
@@ -45,13 +45,16 @@ public class GraphVizGenerator extends ReportGenerator {
         bothWaysArrowList.clear();
         shortNameLookUp.clear();
         uniqueShortNameList.clear();
+        hideComponents.clear();
     }
 
     private boolean generateOutput(ModuleResults results) {
         String name = results.getModuleName();
         openFile(name + "/" + name + EXTN_DOT);
         println("digraph \"" + name + "\"  {");
-        println("graph [dpi = 65, label=\" Dependencies for: " + name + "\"];");
+
+        String label = "Dependencies for: " + name;
+        println("graph [dpi = 65, label=\"" + label + "\"];");
         println("node [style = filled ];");
 
         displayComponents(results);
@@ -69,8 +72,8 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
     private void generateGraph(ResultsHolder holder) {
-        String rootName = getUniqueShortName(holder.getString("name"));
-        if (ignoreName(rootName)) {
+        String shortName = getUniqueShortName(holder.getString("name"));
+        if (shortName.isEmpty()) {
             return;
         }
         ResultsList imports = holder.getResultsList("imports");
@@ -82,11 +85,11 @@ public class GraphVizGenerator extends ReportGenerator {
 
         String stateColour = getStateColour(holder.getBool("component"), holder.getBool("circular"));
 
-        println("\"" + rootName + "\" [color=\"" + stateColour + "\"];");
+        println("\"" + shortName + "\" [color=\"" + stateColour + "\"];");
 
 
         for (ResultsHolder row : imports) {
-            generateOneRow(rootName, row);
+            generateOneRow(shortName, row);
         }
     }
 
@@ -102,18 +105,18 @@ public class GraphVizGenerator extends ReportGenerator {
 
 
     private void generateOneRow(String rootName, ResultsHolder row) {
-        String importName = getUniqueShortName(row.getString("name"));
-        if (ignoreName(importName)) {
+        String shortName = getUniqueShortName(row.getString("name"));
+        if (shortName.isEmpty()) {
             return;
         }
-        if (onBothWaysList(rootName, importName)) {
+        if (onBothWaysList(rootName, shortName)) {
             return;
         }
-        print("  \"" + rootName + "\" -> \"" + importName + "\"");
+        print("  \"" + rootName + "\" -> \"" + shortName + "\"");
 
         if (row.getBool("circularLoop")) {
             print(" [dir=both color=red]");
-            addToBothWaysList(rootName, importName);
+            addToBothWaysList(rootName, shortName);
         } else if (row.getBool("circularWeek")) {
             print(" [color=\"#BA8AA4\"]"); // week red
         } else {
@@ -133,10 +136,7 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
     private boolean ignoreName(String name) {
-        if (hideStuff == null) {
-            return false;
-        }
-        for (String ignore : hideStuff) {
+         for (String ignore : hideComponents) {
             if (ignore.equals(name)) {
                 return true;
             }
@@ -145,6 +145,9 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
     private String getUniqueShortName(String longName) {
+        if (ignoreName(longName)) {
+            return "";//"*other*";
+        }
         String shortName = shortNameLookUp.get(longName);
         if (shortName == null) {
             shortName = createUniqueShortName(longName);
@@ -199,8 +202,8 @@ public class GraphVizGenerator extends ReportGenerator {
         }
     }
 
-    public void hideStuff(List<String> hideStuff) {
+    public void hideComponents(List<String> fullNames) {
 
-        this.hideStuff = hideStuff;
+        this.hideComponents.addAll(fullNames);
     }
 }
