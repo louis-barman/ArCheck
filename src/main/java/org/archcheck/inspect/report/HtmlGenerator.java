@@ -167,8 +167,8 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
         tableHeading("", "Component");
         tableHeading("", "Circular");
         tableHeading("", "Percent");
-        tableHeading("", "Private");
         tableHeading("", "Public");
+        tableHeading("", "Private");
         tableHeading("", "Group");
         startTableData();
         for (ResultsHolder row : table) {
