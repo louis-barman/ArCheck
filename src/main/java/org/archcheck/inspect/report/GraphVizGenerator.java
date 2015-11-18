@@ -17,6 +17,8 @@ import java.util.*;
 public class GraphVizGenerator extends ReportGenerator {
     public static final String EXTN_DOT = ".dot";
 
+    private final ReportLimits reportLimits;
+
     private final Set<String> bothWaysArrowList = new HashSet<String>();
     private final Map<String, String> shortNameLookUp = new HashMap<String, String>();
     private final Set<String> uniqueShortNameList = new HashSet<String>();
@@ -24,6 +26,7 @@ public class GraphVizGenerator extends ReportGenerator {
 
     public GraphVizGenerator(OutputWrapper output) {
         super(output);
+        reportLimits = new ReportLimits(); // TODO MOVE
     }
 
     @Override
@@ -32,6 +35,7 @@ public class GraphVizGenerator extends ReportGenerator {
         for (ModuleResults moduleResults : projectResults) {
             resetData();
             Options options = moduleResults.getOptions();
+            hideComponents(reportLimits.getComponentTrimList(moduleResults));
             hideComponents(options.getHiddenImports());
             boolean success = generateOutput(moduleResults);
             if (!success) {
@@ -54,6 +58,11 @@ public class GraphVizGenerator extends ReportGenerator {
         println("digraph \"" + name + "\"  {");
 
         String label = "Dependencies for: " + name;
+
+        if (hideComponents.size() > 0) {
+            label += " (ignoring " + hideComponents.size() + " items)";
+        }
+
         println("graph [dpi = 65, label=\"" + label + "\"];");
         println("node [style = filled ];");
 
