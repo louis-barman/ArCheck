@@ -1,6 +1,9 @@
 package org.archcheck.inspect.options;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Copyright (C) 2015 Louis Barman.
@@ -13,7 +16,7 @@ public class Options implements ModelOptions {
 
     private final List<String> hiddenImports = new ArrayList<String>();
 
-    private Map<String, Boolean> hiddenClasses = new HashMap<String, Boolean>();
+    private final List<String> hiddenClasses = new ArrayList<String>();
 
     public boolean showAllPackages() {
         return showAllPackages;
@@ -28,25 +31,47 @@ public class Options implements ModelOptions {
     }
 
 
-    public boolean isHiddenClass(String s) {
-
-        Boolean value = hiddenClasses.get(s);
-        if (value == null) {
-            return false;
+    public void addHiddenClasses(Collection<String> strings) {
+        for (String s : strings) {
+            hiddenClasses.add(s);
         }
-        if (!value) {
-            hiddenClasses.put(s, true);
-        }
-
-        return true;
     }
 
-    public void addHiddenClass(String s) {
-        hiddenClasses.put(s, false);
+    public void addHiddenImports(Collection<String> className) {
+        for (String s : className) {
+            hiddenImports.add(s);
+        }
     }
 
-    public void addHiddenImport(String className) {
-        hiddenImports.add(className);
+    public boolean isHiddenImport(String fullClassName) {
+        if (isClassMatch(hiddenImports, fullClassName)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isHiddenClass(String fullClassName) {
+        if (isClassMatch(hiddenClasses, fullClassName)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isClassMatch(List<String> matchList, String name) {
+        for (String matchItem : matchList) {
+            if (matchItem.endsWith(".*")) {
+                matchItem = matchItem.substring(0, matchItem.length() - ".*".length());
+                if (name.startsWith(matchItem)) {
+                    return true;
+                }
+            }
+            if (name.equals(matchItem)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<String> getHiddenImports() {

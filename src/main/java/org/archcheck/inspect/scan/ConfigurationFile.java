@@ -15,6 +15,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Copyright (C) 2015 Louis Barman.
@@ -23,9 +24,11 @@ import java.util.Iterator;
 public class ConfigurationFile {
     private static final String CONFIG_FIELD_NAME = "name";
     private static final String CONFIG_FIELD_PATH = "path";
-    private static final String CONFIG_FIELD_MAX_DEPTH = "max-depth";
-    private static final String CONFIG_HIDE_IMPORT = "hide-import";
+    private static final String CONFIG_FIELD_NODES = "max-nodes";
     private static final String CONFIG_ROOT_DIR = "root-dir";
+    private static final String CONFIG_FIELD_MAX_DEPTH = "max-depth";
+    private static final String CONFIG_HIDE_CLASS = "hide-class";
+    private static final String CONFIG_HIDE_IMPORT = "hide-import";
     private static final String CONFIG_MODULES = "modules";
     private static final String CONFIG_REPORT_DIR = "report-dir";
     private final ObjectMapper jsonMapper;
@@ -117,15 +120,22 @@ public class ConfigurationFile {
             JsonNode item = jsonArray.get(i);
             String name = item.get(CONFIG_FIELD_NAME).getTextValue();
             module.setName(name);
-            Collection<String> paths = getStringArray(item, CONFIG_FIELD_PATH);
-            module.addPaths(paths);
             if (item.has(CONFIG_FIELD_MAX_DEPTH)) {
                 int maxDepth = item.get(CONFIG_FIELD_MAX_DEPTH).getIntValue();
                 moduleOptions.setMaxDepth(maxDepth);
             }
 
+            if (item.has(CONFIG_FIELD_PATH)) {
+                module.addPaths(getStringArrayOption(item, CONFIG_FIELD_PATH));
+            }
 
-            findModuleOptions(item, moduleOptions);
+            if (item.has(CONFIG_HIDE_IMPORT)) {
+                moduleOptions.addHiddenImports(getStringArrayOption(item, CONFIG_HIDE_IMPORT));
+            }
+            if (item.has(CONFIG_HIDE_CLASS)) {
+                moduleOptions.addHiddenClasses(getStringArrayOption(item, CONFIG_HIDE_CLASS));
+            }
+
         }
         return Outcome.success();
     }
@@ -148,7 +158,7 @@ public class ConfigurationFile {
         return outcome;
     }
 
-    private Collection<String> getStringArray(JsonNode item, String filedName ) {
+    private Collection<String> getStringArrayOption(JsonNode item, String filedName ) {
         Collection<String> result = new ArrayList<String>();
         JsonNode jsonStrings =  item.get(filedName);
         if (jsonStrings.isTextual()) {
@@ -166,24 +176,6 @@ public class ConfigurationFile {
             return Outcome.failure("not a valid directory: " + configPath);
         }
         return Outcome.success();
-    }
-
-    private void findModuleOptions(JsonNode root, Options moduleOptions) {
-        JsonNode node = root.get(CONFIG_HIDE_IMPORT);
-
-        if (node == null) {
-            return;
-        }
-
-        if (node.isArray()) {
-            Iterator<JsonNode> ite = node.getElements();
-
-            while (ite.hasNext()) {
-                JsonNode item = ite.next();
-                moduleOptions.addHiddenImport(item.getTextValue());
-
-            }
-        }
     }
 
     public void addPathToSource(String pathToSource) {

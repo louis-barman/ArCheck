@@ -13,6 +13,10 @@ public class XLog {
         //System.out.println("VERBOSE: " + string);
     }
 
+    public static void w(String string) {
+        System.err.println("WARNING: " + string);
+    }
+
     public static void e(String string) {
         System.err.println("ERROR: " + string);
     }
