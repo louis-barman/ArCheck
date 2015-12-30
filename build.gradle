@@ -4,7 +4,7 @@ version '0.2.2-SNAPSHOT' // VERSION_NAME
 apply plugin: 'java'
 apply plugin: 'application'
 
-mainClassName = "org.archcheck.inspect.app.Application"
+mainClassName = "org.archeck.inspect.app.Application"
 
 sourceCompatibility = 1.6
 
