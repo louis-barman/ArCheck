@@ -29,7 +29,7 @@ public abstract class HtmlGeneratorUtils extends ReportGenerator {
     protected void openHtmlFile(int depth, String title, String fileName) {
         openHtmlFile(fileName);
         String depthString = getDepthString(depth);
-        print(getResourceString("/snippet/start.html", "ArchCheck " + title, depthString));
+        print(getResourceString("/snippet/start.html", "ArCheck " + title, depthString));
     }
 
     protected void closeHtml() {

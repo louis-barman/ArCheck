@@ -1,6 +1,6 @@
 # Java Architecture Analysis
 
-**ArchCheck** is a tool that analyses the structure of Java source code using the top level directories 
+**ArCheck** is a tool that analyses the structure of Java source code using the top level directories 
 as a way of splitting the code into separate components and can produce a Java dependency diagram.
 Dividing large programs into smaller more manageable components is a fundamental principle of programming.
 
@@ -9,8 +9,8 @@ Dividing large programs into smaller more manageable components is a fundamental
 The installation steps are as follows:
 
 1. Ensure the **Java** runtime is installed
-1. Download and unzip the **archcheck** release.
-1. Ensure that **archcheck** executable is added to you path.
+1. Download and unzip the **archeck** release.
+1. Ensure that **chcheck** executable is added to you path.
 1. Optionally install **graphviz**. Required for the graphical dependency diagrams.
 1. Ensure the **graphviz** executable is added to your path.
 
@@ -22,21 +22,21 @@ To produce dependency diagrams ensure **graphviz** is installed and added to you
 Choose a project that you want analyze and type the following:
 
 ```bash
-archcheck <path-to-source-code>
+archeck <path-to-source-code>
 ```
 
-Where `<path-to-source-code>` is the directory of just the java source code e.g. `archcheck src/main/java/`
+Where `<path-to-source-code>` is the directory of just the java source code e.g. `archeck src/main/java/`
 
 To generate an html output type the following:
 
-    archcheck --html <html-output-dir> <path-to-source-code>
+    archeck --html <html-output-dir> <path-to-source-code>
 
 
-You can also pass a configuration file to **archcheck**
+You can also pass a configuration file to **archeck**
 
-    archcheck --config <config-file> --html <html-output-dir>
+    archeck --config <config-file> --html <html-output-dir>
     
-The default config file `archcheck.config` will automatically be loaded if found in the current directory. 
+The default config file `archeck.config` will automatically be loaded if found in the current directory. 
 
 > **NOTE:** Ensure all unused imports are removed as these may generate unwanted dependencies. 
 
@@ -84,10 +84,10 @@ Type the following on the command line:
 
     gradle installApp
     
-The executable will be in the `build/install/archcheck/bin` directory
+The executable will be in the `build/install/archeck/bin` directory
 
-To generate an archcheck report on archcheck using the default `archcheck.config` file type:
+To generate an archeck report on archeck using the default `archeck.config` file type:
  
     gradle run
     OR
-    build/install/archcheck/bin/archcheck
+    build/install/archeck/bin/archeck

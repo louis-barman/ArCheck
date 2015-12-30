@@ -20,7 +20,7 @@ public class Director {
     private static final String OPTION_HTML = "html";
     private static final String OPTION_HELP = "help";
     private static final String OPTION_VERSION = "version";
-    public static final String DEFAULT_ARCHCHECK_CONFIG = "archcheck.config";
+    public static final String DEFAULT_ARCHECK_CONFIG = "archeck.config";
     public static final String VERSION_NAME = "0.2.2-SNAPSHOT";
 
 
@@ -37,7 +37,7 @@ public class Director {
 
         if (args.length == 0 && !hasDefaultConfig()) {
             XLog.printlnError("ERROR: missing <path-to-source-code>");
-            XLog.printlnError("USAGE: archcheck [-options] <path-to-source-code>");
+            XLog.printlnError("USAGE: archeck [-options] <path-to-source-code>");
             XLog.printlnError("For help use '-?' or  '--help'");
             return false;
         }
@@ -58,7 +58,7 @@ public class Director {
     }
 
     private boolean hasDefaultConfig() {
-        File defaultConfigFile = new File(DEFAULT_ARCHCHECK_CONFIG);
+        File defaultConfigFile = new File(DEFAULT_ARCHECK_CONFIG);
         return defaultConfigFile.exists();
     }
 
@@ -68,7 +68,7 @@ public class Director {
         }
 
         if (hasDefaultConfig()) {
-            Outcome outcome = configFile.setConfigFile(DEFAULT_ARCHCHECK_CONFIG);
+            Outcome outcome = configFile.setConfigFile(DEFAULT_ARCHECK_CONFIG);
             if (!outcome.successful()) {
                 XLog.error(outcome.getMessage());
                 return false;

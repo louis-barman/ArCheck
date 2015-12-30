@@ -1,6 +1,6 @@
 OVERVIEW: A Java architecture checker
 
-USAGE: archcheck [-options] <path-to-source-code>
+USAGE: archeck [-options] <path-to-source-code>
 
 OPTIONS:
  -?, --help          Shows this help message.

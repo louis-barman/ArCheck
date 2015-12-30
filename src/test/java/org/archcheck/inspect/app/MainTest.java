@@ -18,7 +18,7 @@ public class MainTest extends TestBase {
     @Test
     public void startMain() {
 
-        String testFileName = "src/test/resources/archcheck.config";
+        String testFileName = "src/test/resources/archeck.config";
 
         Application.main(createArgs("--config", testFileName));
 
@@ -26,9 +26,9 @@ public class MainTest extends TestBase {
 
     @Test
     public void startHtmlOutput() {
-        String testFileName = "src/test/resources/archcheck.config";
+        String testFileName = "src/test/resources/archeck.config";
 
-        //Application.main(createArgs("--config", testFileName, "--html", "build/reports/archcheck"));
+        //Application.main(createArgs("--config", testFileName, "--html", "build/reports/archeck"));
     }
 
 }

@@ -41,7 +41,7 @@ public class TransverseTest extends TestBase {
 
     @Test
     public void runTest() {
-        String testFileName = getTestConfigFileName("archcheck.config");
+        String testFileName = getTestConfigFileName("archeck.config");
 
         configFile.setConfigFile(testFileName);
 
