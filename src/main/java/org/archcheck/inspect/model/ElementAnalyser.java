@@ -38,19 +38,12 @@ public abstract class ElementAnalyser {
         return elementItem;
     }
 
-    public ElementItem addSourceFile(String packageName, String className, String filePath, long fileLength) {
+    public ElementItem addSourceClass(String packageName, String className, SourceStatistics sourceStats) {
         setCurrentElementKey(createElementKey(packageName, className));
         currentElement = getOrCreateElementItem(currentElementKey);
         currentElement.markAsInternal();
-        currentElement.setSourceFile(filePath, fileLength);
-
-         return currentElement;
-    }
-
-
-    public ElementItem addSourceClass(String packageName, String className) {
-
         currentElement.setNameOfElement(packageName, className);
+        currentElement.setSourceStats(sourceStats);
 
         internalElements.add(currentElement);
         return currentElement;

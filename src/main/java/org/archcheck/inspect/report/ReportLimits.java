@@ -14,7 +14,7 @@ import java.util.List;
 public class ReportLimits {
 
 
-    private static final int MAX_BLOBBLES = 12; // or Nodes on the diagram
+    private static final int MAX_BLOBBLES = 20; // or Nodes on the diagram
 
     public List<String> getComponentTrimList(ModuleResults moduleResults) {
         ArrayList<String> trimList = new ArrayList<String>();

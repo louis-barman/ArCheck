@@ -5,6 +5,7 @@ import org.archcheck.inspect.language.LanguageFactory;
 import org.archcheck.inspect.language.LineReader;
 import org.archcheck.inspect.language.Token;
 import org.archcheck.inspect.model.ModuleDetails;
+import org.archcheck.inspect.model.SourceStatistics;
 import org.archcheck.inspect.util.XLog;
 
 import java.io.File;
@@ -38,9 +39,9 @@ public class SourceFile implements Token {
     @Override
     public void foundPackageName(String packageName) {
         this.packageName = packageName;
-        module.addSourceFile(packageName, className, file.getAbsolutePath(), file.length());
 
-        module.addSourceClass(packageName, className);
+        SourceStatistics sourceStats = new SourceStatistics(file.getAbsolutePath(), file.length());
+        module.addSourceClass(packageName, className, sourceStats);
     }
 
     @Override

@@ -5,20 +5,20 @@ package org.archcheck.inspect.util;
  */
 public class XLog {
 
-    public static void d(String string) {
-        //System.out.println("DEBUG: " + string);
+    public static void d(String message) {
+        //System.out.println("DEBUG: " + message);
     }
 
-    public static void v(String string) {
-        //System.out.println("VERBOSE: " + string);
+    public static void v(String message) {
+        //System.out.println("VERBOSE: " + message);
     }
 
-    public static void w(String string) {
-        System.err.println("WARNING: " + string);
+    public static void w(String message) {
+        System.err.println("WARNING: " + message);
     }
 
-    public static void e(String string) {
-        System.err.println("ERROR: " + string);
+    public static void e(String message) {
+        System.err.println("ERROR: " + message);
     }
 
     public static void println(String s) {
@@ -42,4 +42,7 @@ public class XLog {
         error(exception.getMessage());
     }
 
+    public static void trace(String message) {
+        System.out.println("TRACE: " + message);
+    }
 }

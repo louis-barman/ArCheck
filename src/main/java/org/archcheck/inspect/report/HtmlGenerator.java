@@ -10,11 +10,13 @@ import org.archcheck.inspect.results.ProjectResults;
  * Copyright (C) 2015 Louis Barman.
  */
 public class HtmlGenerator extends HtmlGeneratorUtils {
-    public static final String DIR_CSS = "css/";
-    public static final String DIR_JS = "js/";
-    public static final String DIR_CLASSES = "classes/";
-    public static final String DIR_PACKAGES = "packages/";
-    public static final String INDEX = "index";
+    private static final boolean CONFIG_ENABLE_CLASS_OUTPUT = true;
+
+    private static final String DIR_CSS = "css/";
+    private static final String DIR_JS = "js/";
+    private static final String DIR_CLASSES = "classes/";
+    private static final String DIR_PACKAGES = "packages/";
+    private static final String INDEX = "index";
     private String outputModuleName;
 
     public HtmlGenerator(OutputWrapper output) {
@@ -306,6 +308,9 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
     }
 
     private void generateClassesHtml(ResultsHolder packageHolder) {
+        if (!CONFIG_ENABLE_CLASS_OUTPUT) {
+            return;
+        }
         ResultsList publicClasses = packageHolder.getResultsList("allClasses");
         for (ResultsHolder item : publicClasses) {
             generateClassHtml(item);

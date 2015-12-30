@@ -40,9 +40,9 @@ public class Transverse {
 
     public boolean start() {
 
-        String reportDir =  configFile.getReportDir();
+        String reportDir = configFile.getReportDir();
 
-        if (reportDir!= null) {
+        if (reportDir != null) {
             Outcome outcome = setHtmlOutput(reportDir);
             if (outcome.failed()) {
                 return false;
@@ -62,26 +62,35 @@ public class Transverse {
     }
 
     private boolean findFilesPhase(ModuleDetails module) {
-        Collection<File> files = new ArrayList<File>();
         WildcardFileFilter fileFilter = new WildcardFileFilter(configFile.getFileTypes());
 
         Collection<String> sourceDirs = module.getSourceDirs();
 
         for (String sourceDir : sourceDirs) {
-            
-            String projectRootDir = configFile.getProjectRootDir();
-            if (!projectRootDir.endsWith("/")) {
-                projectRootDir += '/';
-            }
-            String filePath = projectRootDir + sourceDir;
-            File rootDir = new File(filePath);
-            if (!rootDir.isDirectory()) {
-                XLog.error(" The directory does not exist: " + filePath);
+
+            if (!passFilesForOneModule(module, sourceDir, fileFilter)) {
                 return false;
             }
-
-            files.addAll(FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE));
         }
+        return true;
+    }
+
+    private boolean passFilesForOneModule(ModuleDetails module, String sourceDir, WildcardFileFilter fileFilter) {
+        Collection<File> files = new ArrayList<File>();
+        String projectRootDir = configFile.getProjectRootDir();
+
+        if (!projectRootDir.endsWith("/")) {
+            projectRootDir += '/';
+        }
+
+        String filePath = projectRootDir + sourceDir;
+        File rootDir = new File(filePath);
+        if (!rootDir.isDirectory()) {
+            XLog.error("The directory does not exist: " + filePath);
+            return false;
+        }
+
+        files.addAll(FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE));
         for (File file : files) {
             XLog.v("Found file: " + file);
 
@@ -104,7 +113,7 @@ public class Transverse {
             if (!success) {
                 return false;
             }
-            XLog.println("archcheck: Generated HTML report in directory '" +configFile.getReportDir() + "'");
+            XLog.println("archcheck: Generated HTML report in directory '" + configFile.getReportDir() + "'");
         }
 
         ReportGenerator reports = ReportGeneratorFactory.outputGenerator(reportType, outputWrapper);

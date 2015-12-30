@@ -109,6 +109,8 @@ public class Director {
 
         if (matchOption(firstArg, '?', OPTION_HELP)) {
             printHelp();
+        } else if (matchOption(firstArg, 'h', OPTION_HELP)) {
+            printHelp();
         } else if (matchOption(firstArg, 'v', OPTION_VERSION)) {
             printVersionString();
         } else if (matchOption(firstArg, 'c', OPTION_CONFIG)) {

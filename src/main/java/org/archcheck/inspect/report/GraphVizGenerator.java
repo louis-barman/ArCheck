@@ -52,18 +52,12 @@ public class GraphVizGenerator extends ReportGenerator {
         hideComponents.clear();
     }
 
-    private boolean generateOutput(ModuleResults results) {
+    protected boolean generateOutput(ModuleResults results) {
         String name = results.getModuleName();
         openFile(name + "/" + name + EXTN_DOT);
         println("digraph \"" + name + "\"  {");
 
-        String label = "Dependencies for: " + name;
-
-        if (hideComponents.size() > 0) {
-            label += " (ignoring " + hideComponents.size() + " items)";
-        }
-
-        println("graph [dpi = 65, label=\"" + label + "\"];");
+        println("graph [" + getDrawOptions(name) + "];");
         println("node [style = filled ];");
 
         displayComponents(results);
@@ -72,7 +66,16 @@ public class GraphVizGenerator extends ReportGenerator {
         return startGraphViz(name);
     }
 
-    private void displayComponents(ModuleResults results) {
+    protected String getDrawOptions(String name) {
+        String label = "Dependencies for: " + name;
+
+        if (hideComponents.size() > 0) {
+            label += " (ignoring " + hideComponents.size() + " items)";
+        }
+        return "dpi = 65, label=\"" + label + "\"";
+    }
+
+    protected void displayComponents(ModuleResults results) {
         ResultsList table = results.getPackageInfo();
 
         for (ResultsHolder row : table) {
@@ -80,7 +83,7 @@ public class GraphVizGenerator extends ReportGenerator {
         }
     }
 
-    private void generateGraph(ResultsHolder holder) {
+    protected void generateGraph(ResultsHolder holder) {
         String shortName = getUniqueShortName(holder.getString("name"));
         if (shortName.isEmpty()) {
             return;
@@ -195,7 +198,7 @@ public class GraphVizGenerator extends ReportGenerator {
         return longName;
     }
 
-    private boolean startGraphViz(String name) {
+    protected boolean startGraphViz(String name) {
         String path = output.getAbsolutePath() + "/" + name + "/" + name;
         ProcessBuilder builder = new ProcessBuilder("dot", "-Tsvg", "-o" + path + ".svg", path + EXTN_DOT);
         try {

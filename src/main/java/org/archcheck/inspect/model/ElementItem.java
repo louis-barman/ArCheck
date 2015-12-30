@@ -20,8 +20,7 @@ public class ElementItem implements Comparable<ElementItem> {
     protected ModelOptions options;
     private String packageName;
     private String className;
-    private String filePath;
-    private long fileLength;
+    private SourceStatistics sourceStats;
 
     public ElementItem(ModelOptions options, String elementKey) {
         this.options = options;
@@ -250,13 +249,12 @@ public class ElementItem implements Comparable<ElementItem> {
         return false;
     }
 
-    public long getFileSize() {
-        return fileLength;
+
+    public void setSourceStats(SourceStatistics sourceStats) {
+        this.sourceStats = sourceStats;
     }
 
-    public void setSourceFile(String filePath, long fileLength) {
-        this.filePath = filePath;
-        this.fileLength = fileLength;
+    public SourceStatistics getSourceStats() {
+        return sourceStats;
     }
 }
-

@@ -26,16 +26,11 @@ public class PackageAnalyser extends ElementAnalyser {
         return elementItem;
     }
 
-    public ElementItem addSourceFile(String packageName, String className, String filePath, long fileLength) {
-        ElementItem classItem = classAnalyser.addSourceFile(packageName, className, filePath, fileLength);
-        PackageItem packageItem = (PackageItem) super.addSourceFile(packageName, className,  filePath, fileLength);
-         return packageItem;
-    }
 
     @Override
-    public ElementItem addSourceClass(String packageName, String className) {
-        ElementItem classItem = classAnalyser.addSourceClass(packageName, className);
-        PackageItem packageItem = (PackageItem) super.addSourceClass(packageName, className);
+    public ElementItem addSourceClass(String packageName, String className, SourceStatistics sourceStats) {
+        ElementItem classItem = classAnalyser.addSourceClass(packageName, className, sourceStats);
+        PackageItem packageItem = (PackageItem) super.addSourceClass(packageName, className, sourceStats);
         packageItem.addInternalClass(classItem);
         return packageItem;
     }

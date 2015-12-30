@@ -77,7 +77,7 @@ public class PackageItem extends ElementItem {
             } else {
                 publicCounter++;
             }
-            totalFileSize += classItem.getFileSize();
+            totalFileSize += classItem.getSourceStats().getFileSize();
         }
         resultsHolder.put("publicClassesSize", privateCounter);
         resultsHolder.put("internalClassesSize", publicCounter);

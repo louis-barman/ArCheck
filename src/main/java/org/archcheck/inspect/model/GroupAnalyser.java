@@ -17,26 +17,15 @@ public class GroupAnalyser extends PackageAnalyser {
         return findGroupedNameSpaceHack(packageName);
     }
 
-    public ElementItem addSourceFile(String packageName, String className, String filePath, long fileLength) {
-        int split = findDepthSplitPoint(packageName);
-        if (split > 0) {
-            className = getClassNameString(split, packageName, className);
-            packageName = getPackageString(split, packageName);
-        }
-
-        return super.addSourceFile(packageName, className, filePath, fileLength);
-    }
-
-
     @Override
-    public ElementItem addSourceClass(String packageName, String className) {
+    public ElementItem addSourceClass(String packageName, String className, SourceStatistics sourceStats) {
         int split = findDepthSplitPoint(packageName);
         if (split > 0) {
             className = getClassNameString(split, packageName, className);
             packageName = getPackageString(split, packageName);
         }
 
-        return super.addSourceClass(packageName, className);
+        return super.addSourceClass(packageName, className, sourceStats);
     }
 
     @Override
