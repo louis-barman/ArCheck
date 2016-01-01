@@ -60,11 +60,7 @@ public abstract class ElementAnalyser {
     protected abstract String createElementKey(String packageName, String className);
 
     public void addImportedClass(String importedNameSpace, String importedClassName) {
-
         String elementKey = createElementKey(importedNameSpace, importedClassName);
-        if (isMemberOfThisGroup(elementKey)) {
-            return;
-        }
         ElementItem elementItem = getOrCreateElementItem(elementKey);
         currentElement.canSee(elementItem);
         elementItem.addReverseLookUp(currentElement);
@@ -145,23 +141,6 @@ public abstract class ElementAnalyser {
         results.put("imports", elementItem.importInfo());
     }
 
-    protected String findGroupedNameSpaceHack(String packageName) {
-
-        if (options.getMaxNameSpaceDepth() <= 0) {
-            return packageName;
-        }
-        int count = 0;
-        for (int i = 0; i < packageName.length(); i++) {
-            if (packageName.charAt(i) == SEPARATOR) {
-                count++;
-                if (count >= options.getMaxNameSpaceDepth()) {
-                    return packageName.substring(0, i);
-                }
-            }
-        }
-
-        return packageName;
-    }
 
 }
 

@@ -112,7 +112,7 @@ public class Transverse {
             if (!success) {
                 return false;
             }
-            XLog.println("archeck: Generated HTML report see: file://" + configFile.getReportDirAbsolutePath() + "/index.html");
+            XLog.println("archeck: Generated HTML report. See: file://" + configFile.getReportDirAbsolutePath() + "/index.html");
         }
 
         ReportGenerator reports = ReportGeneratorFactory.outputGenerator(reportType, outputWrapper);

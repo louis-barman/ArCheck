@@ -22,12 +22,6 @@ public class ClassAnalyser extends ElementAnalyser {
     }
 
     @Override
-    protected boolean isMemberOfThisGroup(String elementKey) {
-        String groupKey = findGroupedNameSpaceHack(elementKey);
-        return groupKey.equals(currentGroupKey);
-    }
-
-    @Override
     protected void setCurrentElementKey(String elementKey) {
         super.setCurrentElementKey(elementKey);
     }

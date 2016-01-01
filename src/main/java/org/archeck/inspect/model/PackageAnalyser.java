@@ -26,7 +26,6 @@ public class PackageAnalyser extends ElementAnalyser {
         return elementItem;
     }
 
-
     @Override
     public ElementItem addSourceClass(String packageName, String className, SourceStatistics sourceStats) {
         ElementItem classItem = classAnalyser.addSourceClass(packageName, className, sourceStats);
@@ -35,7 +34,6 @@ public class PackageAnalyser extends ElementAnalyser {
         return packageItem;
     }
 
-
     @Override
     protected void addPackageItemInfo(ResultsHolder results, ElementItem elementItem) {
         super.addPackageItemInfo(results, elementItem);
@@ -43,7 +41,6 @@ public class PackageAnalyser extends ElementAnalyser {
         PackageItem packageItem = (PackageItem) elementItem;
 
         packageItem.addInternalClassInfo(results);
-
     }
 
 }

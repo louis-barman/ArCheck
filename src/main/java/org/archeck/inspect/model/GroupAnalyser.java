@@ -7,7 +7,6 @@ import org.archeck.inspect.options.ModelOptions;
  */
 public class GroupAnalyser extends PackageAnalyser {
 
-
     private final ClassAnalyser classAnalyser;
 
     public GroupAnalyser(ModelOptions options, ClassAnalyser classAnalyser) {
@@ -17,22 +16,19 @@ public class GroupAnalyser extends PackageAnalyser {
 
     @Override
     protected String createElementKey(String packageName, String className) {
-        return findGroupedNameSpaceHack(packageName);
+        return findGroupedNameSpace(packageName);
     }
 
     @Override
     public ElementItem addSourceClass(String packageName, String className, SourceStatistics sourceStats) {
-        int split = findDepthSplitPoint(packageName);
-        if (split > 0) {
-            className = getClassNameString(split, packageName, className);
-            packageName = getPackageString(split, packageName);
-        }
+        String groupPackageName = findGroupedNameSpace(packageName);
+        String groupClassName = getClassNameString(groupPackageName, packageName, className);
 
-        classAnalyser.setGroupKey(packageName);
+        classAnalyser.setGroupKey(groupPackageName);
 
-        ElementItem elementItem = super.addSourceClass(packageName, className, sourceStats);
-        if (split > 0) {
-            elementItem.componentMergeCounter();
+        ElementItem elementItem = super.addSourceClass(groupPackageName, groupClassName, sourceStats);
+        if (groupPackageName.length() < packageName.length()) {
+            elementItem.addMergedPackageNames(packageName);
         }
 
         return elementItem;
@@ -40,37 +36,39 @@ public class GroupAnalyser extends PackageAnalyser {
 
     @Override
     public void addImportedClass(String importedNameSpace, String importedClassName) {
-        int split = findDepthSplitPoint(importedNameSpace);
-        if (split > 0) {
-            importedClassName = getClassNameString(split, importedNameSpace, importedClassName);
-            importedNameSpace = getPackageString(split, importedNameSpace);
-        }
-        if (!isMemberOfThisGroup(importedClassName)) {
-            super.addImportedClass(importedNameSpace, importedClassName);
-            classAnalyser.addImportedClass(importedNameSpace, importedClassName);
+        String groupPackageName = findGroupedNameSpace(importedNameSpace);
+        String groupClassName = getClassNameString(groupPackageName, importedNameSpace, importedClassName);
+
+        if (!isMemberOfThisGroup(groupPackageName)) {
+            super.addImportedClass(groupPackageName, groupClassName);
+            classAnalyser.addImportedClass(groupPackageName, groupClassName);
         }
     }
 
-    protected String getPackageString(int split, String importedNameSpace) {
-        return importedNameSpace.substring(0, split);
+    private String getClassNameString(String groupName, String packageName, String className) {
+        if (groupName.length() == packageName.length()) {
+            return className;
+        }
+        int split = groupName.length();
+        return packageName.substring(split + 1) + SEPARATOR + className;
     }
 
-    protected String getClassNameString(int split, String importedNameSpace, String importedClassName) {
-        return importedNameSpace.substring(split + 1) + SEPARATOR + importedClassName;
-    }
+    protected String findGroupedNameSpace(String packageName) {
 
-    private int findDepthSplitPoint(String text) {
-        if (options.getMaxNameSpaceDepth() > 0) {
-            int depth = 0;
-            for (int splitPoint = 0; splitPoint < text.length(); splitPoint++) {
-                if (text.charAt(splitPoint) == SEPARATOR) {
-                    depth++;
-                    if (depth == options.getMaxNameSpaceDepth()) {
-                        return splitPoint;
-                    }
+        if (options.getMaxNameSpaceDepth() <= 0) {
+            return packageName;
+        }
+        int count = 0;
+        for (int i = 0; i < packageName.length(); i++) {
+            if (packageName.charAt(i) == SEPARATOR) {
+                count++;
+                if (count >= options.getMaxNameSpaceDepth()) {
+                    return packageName.substring(0, i);
                 }
             }
         }
-        return -1;
+
+        return packageName;
     }
+
 }

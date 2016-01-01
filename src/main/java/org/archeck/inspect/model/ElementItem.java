@@ -12,6 +12,7 @@ public class ElementItem implements Comparable<ElementItem> {
     private final List<ElementItem> canSeeAllImports = new ArrayList<ElementItem>();
     private final List<ElementItem> reverseLookUpImport = new ArrayList<ElementItem>();
     private final Map<String, ElementItem> canSeeInternalImports = new TreeMap<String, ElementItem>();
+    private final List<String> mergedPackageNames = new ArrayList<String>();
 
     private boolean internalElement;
     private boolean componentFlag;
@@ -264,8 +265,7 @@ public class ElementItem implements Comparable<ElementItem> {
         return sourceStats;
     }
 
-    public void componentMergeCounter() {
-        componentMergeCounter++;
-
+    public void addMergedPackageNames(String packageName) {
+        mergedPackageNames.add(packageName);
     }
 }
