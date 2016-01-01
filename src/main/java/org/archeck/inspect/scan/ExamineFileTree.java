@@ -17,7 +17,7 @@ public class ExamineFileTree {
 
     TreeNode treeNodeRoot = new TreeNode("");
     private int maxTreeDepth;
-    HashMap<String,String > keyLookup = new HashMap<String,String>();
+    HashMap<String, String> keyLookup = new HashMap<String, String>();
 
 
     public void addSourceFile(String sourcePath) {
@@ -33,7 +33,7 @@ public class ExamineFileTree {
         for (int i = 0; i < depth; i++) {
             String directory = directories[i];
             if (directory.endsWith("FILE_SEPARATOR")) {
-                directory = directory.substring(0,directory.length() -i);
+                directory = directory.substring(0, directory.length() - i);
             }
             node = node.addChild(directory);
         }
@@ -42,11 +42,11 @@ public class ExamineFileTree {
     }
 
     public int analyse() {
-         if (treeNodeRoot.getNumberOfChildren() == 0) {
+        if (treeNodeRoot.getNumberOfChildren() == 0) {
             return -1;
         }
 
-        NodeResults results = new NodeResults ();
+        NodeResults results = new NodeResults();
 
         for (int depth = 1; depth < maxTreeDepth; depth++) {
             results.clear();
@@ -63,21 +63,20 @@ public class ExamineFileTree {
     }
 
 
-
     private void processResults(ArrayList<String> results) {
-         for (String packageName : unique) {
-             for (String shortName : results) {
-                 if (packageName.startsWith(shortName)) {
-                     keyLookup.put(packageName, shortName);
-                 }
-             }
+        for (String packageName : unique) {
+            for (String shortName : results) {
+                if (packageName.startsWith(shortName)) {
+                    keyLookup.put(packageName, shortName);
+                }
+            }
         }
 
     }
 
 
     public String getPackageKey(String s) {
-         return null;
+        return null;
     }
 
 

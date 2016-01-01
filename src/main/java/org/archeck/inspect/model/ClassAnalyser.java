@@ -9,6 +9,7 @@ public class ClassAnalyser extends ElementAnalyser {
 
     private String currentGroupKey;
     protected final ModelOptions options;
+    private String groupKey;
 
     public ClassAnalyser(ModelOptions options) {
         super(options);
@@ -29,7 +30,9 @@ public class ClassAnalyser extends ElementAnalyser {
     @Override
     protected void setCurrentElementKey(String elementKey) {
         super.setCurrentElementKey(elementKey);
-        currentGroupKey = findGroupedNameSpaceHack(elementKey);
     }
 
+    public void setGroupKey(String groupKey) {
+        currentGroupKey = groupKey;
+    }
 }

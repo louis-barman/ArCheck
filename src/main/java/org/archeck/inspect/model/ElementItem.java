@@ -21,6 +21,7 @@ public class ElementItem implements Comparable<ElementItem> {
     private String packageName;
     private String className;
     private SourceStatistics sourceStats;
+    private int componentMergeCounter;
 
     public ElementItem(ModelOptions options, String elementKey) {
         this.options = options;
@@ -100,7 +101,12 @@ public class ElementItem implements Comparable<ElementItem> {
     }
 
     public String getFullName() {
-        return elementKey;
+        String displayName = elementKey;
+        if (componentMergeCounter > 0) {
+            // XXX
+            //displayName += ".*";
+        }
+        return displayName;
     }
 
     // TODO remove
@@ -256,5 +262,10 @@ public class ElementItem implements Comparable<ElementItem> {
 
     public SourceStatistics getSourceStats() {
         return sourceStats;
+    }
+
+    public void componentMergeCounter() {
+        componentMergeCounter++;
+
     }
 }

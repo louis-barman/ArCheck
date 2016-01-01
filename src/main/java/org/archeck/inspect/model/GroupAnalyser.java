@@ -8,8 +8,11 @@ import org.archeck.inspect.options.ModelOptions;
 public class GroupAnalyser extends PackageAnalyser {
 
 
-    public GroupAnalyser(ModelOptions options, ElementAnalyser classAnalyser) {
+    private final ClassAnalyser classAnalyser;
+
+    public GroupAnalyser(ModelOptions options, ClassAnalyser classAnalyser) {
         super(options, classAnalyser);
+        this.classAnalyser = classAnalyser;
     }
 
     @Override
@@ -25,7 +28,14 @@ public class GroupAnalyser extends PackageAnalyser {
             packageName = getPackageString(split, packageName);
         }
 
-        return super.addSourceClass(packageName, className, sourceStats);
+        classAnalyser.setGroupKey(packageName);
+
+        ElementItem elementItem = super.addSourceClass(packageName, className, sourceStats);
+        if (split > 0) {
+            elementItem.componentMergeCounter();
+        }
+
+        return elementItem;
     }
 
     @Override
@@ -35,7 +45,10 @@ public class GroupAnalyser extends PackageAnalyser {
             importedClassName = getClassNameString(split, importedNameSpace, importedClassName);
             importedNameSpace = getPackageString(split, importedNameSpace);
         }
-        super.addImportedClass(importedNameSpace, importedClassName);
+        if (!isMemberOfThisGroup(importedClassName)) {
+            super.addImportedClass(importedNameSpace, importedClassName);
+            classAnalyser.addImportedClass(importedNameSpace, importedClassName);
+        }
     }
 
     protected String getPackageString(int split, String importedNameSpace) {

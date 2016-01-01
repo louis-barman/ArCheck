@@ -76,7 +76,6 @@ public class Transverse {
     }
 
     private boolean passFilesForOneModule(ModuleDetails module, String sourceDir, WildcardFileFilter fileFilter) {
-        Collection<File> files = new ArrayList<File>();
         String projectRootDir = configFile.getProjectRootDir();
 
         if (!projectRootDir.endsWith("/")) {
@@ -90,7 +89,7 @@ public class Transverse {
             return false;
         }
 
-        files.addAll(FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE));
+        Collection<File> files = FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE);
         for (File file : files) {
             XLog.v("Found file: " + file);
 
@@ -113,7 +112,7 @@ public class Transverse {
             if (!success) {
                 return false;
             }
-            XLog.println("archeck: Generated HTML report in directory '" + configFile.getReportDir() + "'");
+            XLog.println("archeck: Generated HTML report see: file://" + configFile.getReportDirAbsolutePath() + "/index.html");
         }
 
         ReportGenerator reports = ReportGeneratorFactory.outputGenerator(reportType, outputWrapper);

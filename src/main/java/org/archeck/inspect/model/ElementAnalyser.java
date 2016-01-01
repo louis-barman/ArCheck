@@ -74,7 +74,6 @@ public abstract class ElementAnalyser {
         return elementKey.equals(currentElementKey);
     }
 
-
     public void buildInternalElements() {
         for (ElementItem elementItem : internalElements) {
             elementItem.buildInternalElements();
@@ -146,7 +145,6 @@ public abstract class ElementAnalyser {
         results.put("imports", elementItem.importInfo());
     }
 
-
     protected String findGroupedNameSpaceHack(String packageName) {
 
         if (options.getMaxNameSpaceDepth() <= 0) {
@@ -164,7 +162,6 @@ public abstract class ElementAnalyser {
 
         return packageName;
     }
-
 
 }
 

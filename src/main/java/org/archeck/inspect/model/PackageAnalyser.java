@@ -35,11 +35,6 @@ public class PackageAnalyser extends ElementAnalyser {
         return packageItem;
     }
 
-    @Override
-    public void addImportedClass(String importedNameSpace, String importedClassName) {
-        classAnalyser.addImportedClass(importedNameSpace, importedClassName);
-        super.addImportedClass(importedNameSpace, importedClassName);
-    }
 
     @Override
     protected void addPackageItemInfo(ResultsHolder results, ElementItem elementItem) {

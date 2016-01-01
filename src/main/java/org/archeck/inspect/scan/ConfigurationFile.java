@@ -217,4 +217,13 @@ public class ConfigurationFile {
     public String getReportDir() {
         return reportDir;
     }
+
+    public String getReportDirAbsolutePath() {
+        try {
+            return new File(getReportDir()).getCanonicalPath();
+        } catch (IOException e) {
+           return "Unknown path ";
+        }
+    }
+
 }

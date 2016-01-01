@@ -16,15 +16,15 @@ public class ModuleDetails {
     private final Options options;
     private String name;
 
-    private final ElementAnalyser classAnalyser;
-    private final GroupAnalyser packageAnalyser;
+    private final ClassAnalyser classAnalyser;
+    private final GroupAnalyser groupAnalyser;
     private Collection<String> pathToSource = new ArrayList<String>();
     private long totalFileLength;
 
     public ModuleDetails(Options options) {
         this.options = options;
         classAnalyser = new ClassAnalyser(options);
-        packageAnalyser = new GroupAnalyser(options, classAnalyser);
+        groupAnalyser = new GroupAnalyser(options, classAnalyser);
     }
 
     public void setName(String name) {
@@ -48,9 +48,9 @@ public class ModuleDetails {
     }
 
     public void analysePhase() {
-        packageAnalyser.buildInternalElements();
-        packageAnalyser.detectComponents();
-        packageAnalyser.detectCircularRefs();
+        groupAnalyser.buildInternalElements();
+        groupAnalyser.detectComponents();
+        groupAnalyser.detectCircularRefs();
         classAnalyser.buildInternalElements();
         classAnalyser.detectComponents();
         classAnalyser.detectCircularRefs();
@@ -60,7 +60,7 @@ public class ModuleDetails {
         if (isHiddenClass(packageName, className)) {
             return;
         }
-        packageAnalyser.addSourceClass(packageName, className, sourceStats);
+        groupAnalyser.addSourceClass(packageName, className, sourceStats);
         totalFileLength += sourceStats.getFileSize();
     }
 
@@ -68,15 +68,15 @@ public class ModuleDetails {
         if (isHiddenImport(importedNameSpace, importedClassName)) {
             return;
         }
-        packageAnalyser.addImportedClass(importedNameSpace, importedClassName);
+        groupAnalyser.addImportedClass(importedNameSpace, importedClassName);
     }
 
     public ResultsList getCodeGroupSummaryTable() {
-        return packageAnalyser.getCodeGroupSummaryTable();
+        return groupAnalyser.getCodeGroupSummaryTable();
     }
 
     public ResultsList getPackageInfo() {
-        return packageAnalyser.getPackageInfo();
+        return groupAnalyser.getPackageInfo();
     }
 
     public Options getOptions() {
