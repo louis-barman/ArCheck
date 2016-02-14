@@ -10,6 +10,12 @@ import java.util.List;
  */
 
 public class Options implements ModelOptions {
+
+    public static final int MAX_NODES = 20; // or Nodes on the diagram
+    private static final boolean ENABLE_MAX_DEPTH = false;
+    public static boolean IGNORE_NODES_WITH_NO_CONNECTIONS = true;
+    public static final int MINIMUM_COMPONENTS = 6;
+
     public boolean showAllPackages = false;
     public boolean showComponentPackages = false;
     public int maxNameSpaceDepth = 0;
@@ -79,6 +85,8 @@ public class Options implements ModelOptions {
     }
 
     public void setMaxDepth(int maxDepth) {
-        maxNameSpaceDepth = maxDepth;
+        if (ENABLE_MAX_DEPTH) {
+            maxNameSpaceDepth = maxDepth;
+        }
     }
 }

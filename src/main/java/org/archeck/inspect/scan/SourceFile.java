@@ -20,20 +20,22 @@ todo ignore imports in comments
 public class SourceFile implements Token {
     private final File file;
     private final ModuleDetails module;
+    private final AnyLanguage language;
     private String className;
     private String packageName;
 
     public SourceFile(File file, ModuleDetails module) {
         this.file = file;
         this.module = module;
+        language = LanguageFactory.languageDecoder("java");
     }
 
     public void passFile() {
-        AnyLanguage language = LanguageFactory.languageDecoder("java");
         LineReader lines = new LineReader(file);
         lines.openFile();
         className = language.getClassName(file.getName());
-        language.findImports(lines, this);
+        language.passAllLines(lines, this);
+        lines.closeFile();
     }
 
     @Override

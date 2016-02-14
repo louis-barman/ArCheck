@@ -5,7 +5,7 @@ package org.archeck.inspect.language;
  */
 public abstract class AnyLanguage {
 
-    abstract public void findImports(LineReader lines, Token token);
+    abstract public void passAllLines(LineReader lines, Token token);
 
     public abstract String getClassName(String fileName);
 

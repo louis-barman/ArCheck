@@ -38,4 +38,7 @@ public class ProjectDetails {
         }
     }
 
+    public void clear() {
+        moduleList.clear();
+    }
 }

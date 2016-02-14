@@ -18,13 +18,12 @@ public class JavaLanguage extends AnyLanguage {
     public static final String KEY_WORD_STATIC = "static";
     public static final String STATEMENT_TERMINATOR = ";";
 
-    public void findImports(LineReader lines, Token token) {
+    public void passAllLines(LineReader lines, Token token) {
         String line;
 
 
         while ((line = lines.readLine()) != null) {
             passOneLine(line, token);
-
         }
 
     }

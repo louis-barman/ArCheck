@@ -22,7 +22,6 @@ public class ElementItem implements Comparable<ElementItem> {
     private String packageName;
     private String className;
     private SourceStatistics sourceStats;
-    private int componentMergeCounter;
 
     public ElementItem(ModelOptions options, String elementKey) {
         this.options = options;
@@ -103,9 +102,9 @@ public class ElementItem implements Comparable<ElementItem> {
 
     public String getFullName() {
         String displayName = elementKey;
-        if (componentMergeCounter > 0) {
+        if (mergedPackageNames.size() > 0) {
             // XXX
-            //displayName += ".*";
+            displayName += ".**";
         }
         return displayName;
     }

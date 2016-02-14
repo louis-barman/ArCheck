@@ -14,7 +14,6 @@ import org.archeck.inspect.util.XLog;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -40,6 +39,8 @@ public class Transverse {
 
     public boolean start() {
 
+        projectResults.clear();
+
         String reportDir = configFile.getReportDir();
 
         if (reportDir != null) {
@@ -49,19 +50,25 @@ public class Transverse {
             }
         }
 
-        for (ModuleDetails module : projectDetails.getModuleList()) {
-            projectResults.createModuleResults(module);
-            boolean result = findFilesPhase(module);
-            if (!result) {
-                return false;
+        try {
+
+            for (ModuleDetails module : projectDetails.getModuleList()) {
+                projectResults.createModuleResults(module);
+                boolean result = findFilesPhase(module);
+                if (!result) {
+                    return false;
+                }
             }
+        } catch (AbortScanException e) {
+            return false;
+
         }
         projectDetails.analysePhase();
 
         return resultsPhase();
     }
 
-    private boolean findFilesPhase(ModuleDetails module) {
+    private boolean findFilesPhase(ModuleDetails module) throws AbortScanException {
         WildcardFileFilter fileFilter = new WildcardFileFilter(configFile.getFileTypes());
 
         Collection<String> sourceDirs = module.getSourceDirs();
@@ -75,7 +82,7 @@ public class Transverse {
         return true;
     }
 
-    private boolean passFilesForOneModule(ModuleDetails module, String sourceDir, WildcardFileFilter fileFilter) {
+    private boolean passFilesForOneModule(ModuleDetails module, String sourceDir, WildcardFileFilter fileFilter) throws AbortScanException {
         String projectRootDir = configFile.getProjectRootDir();
 
         if (!projectRootDir.endsWith("/")) {
@@ -90,6 +97,14 @@ public class Transverse {
         }
 
         Collection<File> files = FileUtils.listFiles(rootDir, fileFilter, TrueFileFilter.INSTANCE);
+        FileTreeScanner examineFileTree = new FileTreeScanner(module.getGroupControl());
+
+        for (File file : files) {
+            examineFileTree.addSourceFile(file);
+        }
+
+        examineFileTree.analyse();
+
         for (File file : files) {
             XLog.v("Found file: " + file);
 
@@ -99,6 +114,7 @@ public class Transverse {
         }
         return true;
     }
+
 
     private boolean resultsPhase() {
         Outcome result = outputWrapper.deleteOutputDirectory();

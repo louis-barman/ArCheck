@@ -45,7 +45,7 @@ public class GraphVizGenerator extends ReportGenerator {
         return true;
     }
 
-    private void resetData() {
+    protected void resetData() {
         bothWaysArrowList.clear();
         shortNameLookUp.clear();
         uniqueShortNameList.clear();
@@ -90,8 +90,8 @@ public class GraphVizGenerator extends ReportGenerator {
         }
         ResultsList imports = holder.getResultsList("imports");
         ResultsList crossRef = holder.getResultsList("crossRef");
-        ;
-        if (imports.size() == 0 && crossRef.size() == 0) {
+
+        if (imports.size() == 0 && crossRef.size() == 0 && Options.IGNORE_NODES_WITH_NO_CONNECTIONS) {
             return;
         }
 
@@ -105,7 +105,7 @@ public class GraphVizGenerator extends ReportGenerator {
         }
     }
 
-    private String getStateColour(boolean component, boolean circular) {
+    protected String getStateColour(boolean component, boolean circular) {
         if (component) {
             return "#cbd5e8"; //good blue
         } else if (circular) {
@@ -116,19 +116,19 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
 
-    private void generateOneRow(String rootName, ResultsHolder row) {
-        String shortName = getUniqueShortName(row.getString("name"));
-        if (shortName.isEmpty()) {
+    protected void generateOneRow(String rootName, ResultsHolder row) {
+        String targetName = getUniqueShortName(row.getString("name"));
+        if (targetName.isEmpty()) {
             return;
         }
-        if (onBothWaysList(rootName, shortName)) {
+        if (onBothWaysList(rootName, targetName)) {
             return;
         }
-        print("  \"" + rootName + "\" -> \"" + shortName + "\"");
+        print("  \"" + rootName + "\" -> \"" + targetName + "\"");
 
         if (row.getBool("circularLoop")) {
             print(" [dir=both color=red]");
-            addToBothWaysList(rootName, shortName);
+            addToBothWaysList(rootName, targetName);
         } else if (row.getBool("circularWeek")) {
             print(" [color=\"#BA8AA4\"]"); // week red
         } else {
@@ -139,15 +139,15 @@ public class GraphVizGenerator extends ReportGenerator {
     }
 
 
-    private void addToBothWaysList(String rootName, String importName) {
+    protected void addToBothWaysList(String rootName, String importName) {
         bothWaysArrowList.add(rootName + '+' + importName);
     }
 
-    private boolean onBothWaysList(String rootName, String importName) {
+    protected boolean onBothWaysList(String rootName, String importName) {
         return bothWaysArrowList.contains(importName + '+' + rootName);
     }
 
-    private boolean ignoreName(String name) {
+    protected boolean ignoreName(String name) {
         for (String ignore : hideComponents) {
             if (ignore.equals(name)) {
                 return true;
@@ -156,7 +156,7 @@ public class GraphVizGenerator extends ReportGenerator {
         return false;
     }
 
-    private String getUniqueShortName(String longName) {
+    protected String getUniqueShortName(String longName) {
         if (ignoreName(longName)) {
             return "";//"*other*";
         }
@@ -168,7 +168,7 @@ public class GraphVizGenerator extends ReportGenerator {
         return shortName;
     }
 
-    private String createUniqueShortName(String longName) {
+    protected String createUniqueShortName(String longName) {
         String shortName = createShortName(longName, 0);
 
         for (int i = 1; i < 10; i++) {
@@ -181,7 +181,7 @@ public class GraphVizGenerator extends ReportGenerator {
         return shortName;
     }
 
-    private String createShortName(String longName, int dotIndex) {
+    protected String createShortName(String longName, int dotIndex) {
         int dotCounter = 0;
         int n = longName.length() - 1;
 

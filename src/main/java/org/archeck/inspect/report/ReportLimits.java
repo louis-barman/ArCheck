@@ -2,6 +2,7 @@ package org.archeck.inspect.report;
 
 import org.archeck.inspect.model.ResultsHolder;
 import org.archeck.inspect.model.ResultsList;
+import org.archeck.inspect.options.Options;
 import org.archeck.inspect.results.ModuleResults;
 
 import java.util.ArrayList;
@@ -14,13 +15,12 @@ import java.util.List;
 public class ReportLimits {
 
 
-    private static final int MAX_BLOBBLES = 20; // or Nodes on the diagram
 
     public List<String> getComponentTrimList(ModuleResults moduleResults) {
         ArrayList<String> trimList = new ArrayList<String>();
         ResultsList table = moduleResults.getCodeGroupSummaryTable();
 
-        if (MAX_BLOBBLES == 0 || table.size() <= MAX_BLOBBLES)  {
+        if (Options.MAX_NODES == 0 || table.size() <= Options.MAX_NODES)  {
             return trimList;
         }
 
@@ -31,7 +31,7 @@ public class ReportLimits {
 
         Collections.sort(allItems);
 
-        int size = allItems.size() - MAX_BLOBBLES ;
+        int size = allItems.size() - Options.MAX_NODES;
         if (size < 0) {
             size = 0;
         }

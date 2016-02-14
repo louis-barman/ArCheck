@@ -37,7 +37,7 @@ public class JavaLanguageTest extends TestBase {
     @Test
     public void test_foundImportIsNotCalled() {
         fakeInputLine("any line;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token, never()).foundImport(anyString(), anyString());
         verify(token, never()).foundPackageName(anyString());
     }
@@ -45,7 +45,7 @@ public class JavaLanguageTest extends TestBase {
     @Test
     public void importStatementInASingleLineCommentIsIgnored() {
         fakeInputLine("//import package.name.Class;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token, never()).foundImport(anyString(), anyString());
     }
 
@@ -57,7 +57,7 @@ public class JavaLanguageTest extends TestBase {
         fakeInputLine("/*");
         fakeInputLine("import package.name.Class;");
         fakeInputLine("* /"); fixme
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token, never()).foundImport(anyString(), anyString());
     }
     */
@@ -66,14 +66,14 @@ public class JavaLanguageTest extends TestBase {
     @Test
     public void importStatementIsSplitIntoIntoPackageAndClass() {
         fakeInputLine("import package.name.Class;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token).foundImport("package.name", "Class");
     }
 
     @Test
     public void staticImportStatementWorksCorrectly() {
         fakeInputLine("import static package.name.Class;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token).foundImport("package.name", "Class");
     }
 
@@ -81,7 +81,7 @@ public class JavaLanguageTest extends TestBase {
     public void twoImportStatementsWorkCorrectly() {
         fakeInputLine("import package.name.Class;");
         fakeInputLine("import package.name2.Class2;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token, times(2)).foundImport(anyString(), anyString());
         verify(token).foundImport("package.name", "Class");
         verify(token).foundImport("package.name2", "Class2");
@@ -92,7 +92,7 @@ public class JavaLanguageTest extends TestBase {
     @Test
     public void twoImportStatementsWorkCorrectlyOnOneLine() {
         fakeInputLine("import package.name.Class;import package.name2.Class2;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token, times(2)).foundImport(anyString(), anyString());
         verify(token).foundImport("package.name", "Class");
         verify(token).foundImport("package.name2", "Class2");
@@ -101,7 +101,7 @@ public class JavaLanguageTest extends TestBase {
     @Test
     public void importClassesStartWithFirstCapitalLetter() {
         fakeInputLine("import package.name.Class.Enum;");
-        classUnderTest.findImports(lineReader, token);
+        classUnderTest.passAllLines(lineReader, token);
         verify(token).foundImport("package.name", "Class.Enum");
     }
     */

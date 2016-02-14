@@ -111,4 +111,7 @@ public class ModuleDetails {
         return false;
     }
 
+    public GroupControl getGroupControl() {
+        return groupAnalyser;
+    }
 }

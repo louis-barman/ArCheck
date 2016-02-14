@@ -2,12 +2,15 @@ package org.archeck.inspect.model;
 
 import org.archeck.inspect.options.ModelOptions;
 
+import java.util.HashMap;
+
 /**
  * Copyright (C) 2015 Louis Barman.
  */
-public class GroupAnalyser extends PackageAnalyser {
+public class GroupAnalyser extends PackageAnalyser implements GroupControl {
 
     private final ClassAnalyser classAnalyser;
+    private final HashMap<String, String> keyLookup = new HashMap<String, String>();
 
     public GroupAnalyser(ModelOptions options, ClassAnalyser classAnalyser) {
         super(options, classAnalyser);
@@ -54,7 +57,15 @@ public class GroupAnalyser extends PackageAnalyser {
     }
 
     protected String findGroupedNameSpace(String packageName) {
+        String groupName = keyLookup.get(packageName);
+        if (groupName!= null) {
+            return groupName;
+        }
 
+        return getMaxDepthNameSpace(packageName);
+    }
+
+    private String getMaxDepthNameSpace(String packageName) {
         if (options.getMaxNameSpaceDepth() <= 0) {
             return packageName;
         }
@@ -71,4 +82,8 @@ public class GroupAnalyser extends PackageAnalyser {
         return packageName;
     }
 
+    @Override
+    public void addGroupNameLookup(String packageName, String componentPackageName) {
+        keyLookup.put(packageName, componentPackageName );
+    }
 }

@@ -31,6 +31,9 @@ public class LineReader {
     }
 
     public String readLine() {
+        if (bufferedReader == null) {
+            return null;
+        }
         String text = null;
         try {
             text = bufferedReader.readLine();
@@ -38,5 +41,15 @@ public class LineReader {
             XLog.error(e);
         }
         return text;
+    }
+
+
+    public void closeFile() {
+        try {
+            bufferedReader.close();
+        } catch (IOException e) {
+            XLog.error(e);
+        }
+        bufferedReader = null;
     }
 }
