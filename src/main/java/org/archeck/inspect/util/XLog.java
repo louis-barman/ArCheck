@@ -43,6 +43,6 @@ public class XLog {
     }
 
     public static void trace(String message) {
-        System.out.println("TRACE: " + message);
+        //System.out.println("TRACE: " + message);
     }
 }

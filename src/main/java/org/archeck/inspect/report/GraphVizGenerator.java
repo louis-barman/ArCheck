@@ -95,7 +95,7 @@ public class GraphVizGenerator extends ReportGenerator {
             return;
         }
 
-        String stateColour = getStateColour(holder.getBool("component"), holder.getBool("circular"));
+        String stateColour = getStateColour(holder.getBool("circular"));
 
         println("\"" + shortName + "\" [color=\"" + stateColour + "\"];");
 
@@ -105,13 +105,11 @@ public class GraphVizGenerator extends ReportGenerator {
         }
     }
 
-    protected String getStateColour(boolean component, boolean circular) {
-        if (component) {
-            return "#cbd5e8"; //good blue
-        } else if (circular) {
+    protected String getStateColour(boolean circular) {
+        if (circular) {
             return "#E8CFDE"; //bad red
         } else {
-            return "#F4E395"; // warn
+            return "#cbd5e8"; //good blue
         }
     }
 

@@ -26,6 +26,8 @@ public class PackageItem extends ElementItem {
     }
 
     public void addInternalClassInfo(ResultsHolder results) {
+        results.put("fullDisplayName", getComponentPackageDisplayName());
+
         ResultsList resultList = getAllInternalClassesInfo();
         results.put("allClasses", resultList);
 
@@ -36,10 +38,9 @@ public class PackageItem extends ElementItem {
 
         for (ElementItem classItem : internalClassList) {
             ResultsHolder classItemResults = new ResultsHolder();
-            classItemResults.put("fullClassName", classItem.getFullName());
+            classItemResults.put("fullClassName", classItem.getComponentPackageName());
             classItemResults.put("className", classItem.getClassName());
-            classItemResults.put("component", classItem.isComponent());
-            classItemResults.put("circularRef", classItem.isCircularRef());
+            classItemResults.put("circular", classItem.isCircularRef());
             if (classItem.isPrivateElement(elementKey)) {
                 publicClassResults.add(classItemResults);
             } else {
@@ -56,7 +57,7 @@ public class PackageItem extends ElementItem {
             classItemResults.put("classKey", classItem.getElementKey());
             classItemResults.put("className", classItem.getClassName());
             classItemResults.put("packageName", classItem.getPackageName());
-            classItemResults.put("component", classItem.isComponent());
+            classItemResults.put("circular", classItem.isCircularRef());
             classItemResults.put("crossRef", classItem.crossRefsInfo());
             classItemResults.put("imports", classItem.importInfo());
         }

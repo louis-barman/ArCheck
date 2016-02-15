@@ -135,7 +135,6 @@ public abstract class ElementAnalyser {
 
     protected void addPackageItemInfo(ResultsHolder results, ElementItem elementItem) {
         results.put("name", elementItem.getElementKey());
-        results.put("component", elementItem.isComponent());
         results.put("circular", elementItem.isCircularRef());
         results.put("crossRef", elementItem.crossRefsInfo());
         results.put("imports", elementItem.importInfo());

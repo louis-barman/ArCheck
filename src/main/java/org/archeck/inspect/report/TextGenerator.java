@@ -42,12 +42,11 @@ public class TextGenerator extends ReportGenerator {
 
     private void displayComponents(ModuleResults results) {
         long totalFileSize = results.getTotalFileSize();
-        tableHeading(11, "Component");
         tableHeading(10, "Circular");
         tableHeading(10, "Percent");
         tableHeading(10, "Private");
         tableHeading(8, "Public");
-        println("Group");
+        println("Package");
 
         ResultsList table = results.getCodeGroupSummaryTable();
          for (ResultsHolder row : table) {
@@ -58,9 +57,8 @@ public class TextGenerator extends ReportGenerator {
     }
 
     private void displayCodeGroupSummaryRow(ResultsHolder holder, long totalFileSize) {
-        boolean component = holder.getBool("component");
+
         boolean circular = holder.getBool("circular");
-        tableRow(11,  yesNo(component));
         tableRow(10, yesNo(circular));
         double percent = (holder.getLong("fileSize")/(double)totalFileSize) * 100.0;
         tableRow(10, String.format("%05.2f%%", percent));

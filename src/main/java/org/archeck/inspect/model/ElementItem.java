@@ -100,10 +100,13 @@ public class ElementItem implements Comparable<ElementItem> {
         return false;
     }
 
-    public String getFullName() {
+    public String getComponentPackageName() {
+        return elementKey;
+    }
+
+    public String getComponentPackageDisplayName() {
         String displayName = elementKey;
         if (mergedPackageNames.size() > 0) {
-            // XXX
             displayName += ".**";
         }
         return displayName;
@@ -179,8 +182,8 @@ public class ElementItem implements Comparable<ElementItem> {
 
     public void getCodeGroupSummaryResult(ResultsHolder resultsHolder) {
 
-        resultsHolder.put("fullName", getFullName());
-        resultsHolder.put("component", isComponent());
+        resultsHolder.put("fullName", getComponentPackageName());
+        resultsHolder.put("fullDisplayName", getComponentPackageDisplayName());
         resultsHolder.put("circular", isCircularRef());
 
 
@@ -211,8 +214,7 @@ public class ElementItem implements Comparable<ElementItem> {
                 holder.put("name", element.elementKey);
                 holder.put("circularLoop", element.isCircular(elementKey));
                 holder.put("circularWeek", isCircularRef() && element.isCircularRef());
-                holder.put("component", element.isComponent());
-                holder.put("circularRef", element.isCircularRef());
+                holder.put("circular", element.isCircularRef());
             }
         }
         return resultList;
@@ -230,8 +232,7 @@ public class ElementItem implements Comparable<ElementItem> {
                 resultList.add(holder);
                 holder.put("name", element.elementKey);
                 holder.put("circularLoop", element.isCircularXRef(this));
-                holder.put("component", element.isComponent());
-                holder.put("circularRef", element.isCircularRef());
+                holder.put("circular", element.isCircularRef());
             }
 
         }

@@ -51,7 +51,7 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
     }
 
     private String getComponentStyle(ResultsHolder item) {
-        return item.getBool("component") ? "good" : "bad";
+        return item.getBool("circular") ? "bad" : "good";
     }
 
     private void fontComponentColour(ResultsHolder item, String text) {
@@ -157,7 +157,7 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
 
     private void displayCodeGroupSummaryTable(ModuleResults results) {
         long totalFileSize = results.getTotalFileSize();
-        printSnippet(HtmlStr.h2, "Code Groups");
+        printSnippet(HtmlStr.h2, "Components");
         ResultsList table = results.getCodeGroupSummaryTable();
         if (table.size() == 0) {
             println("None.");
@@ -166,12 +166,11 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
 
         startTableHeading();
 
-        tableHeading("", "Component");
         tableHeading("", "Circular");
         tableHeading("", "Percent");
         tableHeading("", "Public");
         tableHeading("", "Private");
-        tableHeading("", "Group");
+        tableHeading("", "Package");
         startTableData();
         for (ResultsHolder row : table) {
             displayCodeGroupSummaryRow(row, totalFileSize);
@@ -180,24 +179,22 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
         endTable();
     }
 
-
     private void displayCodeGroupSummaryRow(ResultsHolder holder, long totalFileSize) {
         println("<tr>");
-        boolean component = holder.getBool("component");
+
         boolean circular = holder.getBool("circular");
-        String stateColour = getStateColour(component, circular);
-        tableData(stateColour, yesNo(component));
+        String stateColour = getStateColour( circular);
         tableData(stateColour, yesNo(circular));
         double percent = (holder.getLong("fileSize")/(double)totalFileSize) * 100.0;
         tableData(String.format("%05.2f%%", percent));
         tableData("" + holder.getInt("publicClassesSize"));
         tableData("" + holder.getInt("internalClassesSize"));
-        tableData(stateColour, packageLinkRoot(holder.getString("fullName")));
+        tableData(stateColour, link(DIR_PACKAGES + holder.getString("fullName"), holder.getString("fullDisplayName")));
         println("</tr>");
     }
 
     private String yesNo(boolean choice) {
-        return choice ? "yes" : " ";
+        return choice ? "yes" : "no";
     }
 
 
@@ -220,16 +217,15 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
         String name = packageHolder.getString("name");
         openHtmlFile(2, outputModuleName, outputModuleName + '/' + DIR_PACKAGES + name);
         displayBreadCrumb(2, getModuleLink(), name);
-        printSnippet(HtmlStr.h1, "Code Group");
-
+        printSnippet(HtmlStr.h1, "Component");
 
         String style = getComponentStyle(packageHolder);
         print("Name: ");
-        printBr(fontColour(style, name));
+        printBr(fontColour(style, packageHolder.getString("fullDisplayName")));
 
-        print("Component: ");
+        print("Circular references: ");
 
-        printBr(fontColour(style, packageHolder.getBool("component") ? "YES" : "NO"));
+        printBr(fontColour(style, packageHolder.getBool("circular") ? "YES" : "NO"));
 
         printSnippet(HtmlStr.h2, "Public Classes");
         ResultsList publicClasses = packageHolder.getResultsList("publicClasses");
@@ -283,27 +279,23 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
         closeHtml();
     }
 
-    private String componentOrCircularRefStyle(ResultsHolder item) {
-        return getStateColour(item.getBool("component"), item.getBool("circularRef"));
+    private String componentOrCircularRefStyle(ResultsHolder item) { // XXXZ
+        return getStateColour( item.getBool("circular"));
     }
 
-    private String getStateColour(boolean component, boolean circular) {
-        if (component) {
-            return "good";
-        } else if (circular) {
+    private String getStateColour(boolean circular) {
+       if (circular) {
             return "bad";
         } else {
-            return "warn";
+            return "good";
         }
     }
 
     private void divComponentOrCircularRef(ResultsHolder item) {
-        if (item.getBool("component")) {
-            divStart("good");
-        } else if (item.getBool("circularRef")) {
+  if (item.getBool("circular")) {
             divStart("bad");
         } else {
-            divStart("warn");
+            divStart("good");
         }
     }
 
@@ -327,9 +319,14 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
 
         printSnippet(HtmlStr.h1, "Class");
 
-        divComponent(item);
-        printSnippet(HtmlStr.h4, className);
-        divEnd();
+        String style = getComponentStyle(item);
+        print("Name: ");
+        printBr(fontColour(style, className));
+
+        print("Circular references: ");
+
+        printBr(fontColour(style, item.getBool("circular") ? "YES" : "NO"));
+
 
         printSnippet(HtmlStr.h2, "Dependencies");
         ResultsList importList = item.getResultsList("imports");
@@ -337,7 +334,7 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
             println("None.");
         }
         for (ResultsHolder row : importList) {
-            String style = componentOrCircularRefStyle(row);
+            style = componentOrCircularRefStyle(row);
 
             print("import " + linkStyle(style, row.getString("name")));
             if (row.getBool("circularLoop")) {
@@ -353,7 +350,7 @@ public class HtmlGenerator extends HtmlGeneratorUtils {
             println("None.");
         }
         for (ResultsHolder row : crossRef) {
-            String style = row.getBool("circularLoop") ? "bad" : "normal";
+            style = row.getBool("circularLoop") ? "bad" : "normal";
             printBr("ref " + linkStyle(style, row.getString("name")));
         }
 
